@@ -1,0 +1,85 @@
+
+{% extends 'baseTea.html' %}
+
+{% block title %}申请项目{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+label{
+	margin-top: 5px;
+}
+
+.input-item{
+	display: block;
+	margin-bottom: 7px;
+    padding: 5px 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="fly-panel">
+        <div class="schedule">
+            <h4>教改/教材/教研项目申请</h4>
+            <div class="divider-line"></div>
+            <div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">填写项目申请内容</h3>
+				</div>
+				<div class="panel-body">
+					<form id="submit-form" action="/teaching/applyProject/" method="POST" enctype="multipart/form-data">
+						<label for="title">项目名称：</label>
+						<input type="text" name="title" class="form-control" id="title" placeholder="请输入项目名称">
+						<div class="input-item">
+							<label class="general-title" style="float: left;margin: 0px">项目类别：</label>
+							<select class="form-control" id="category" name="category" style="width: 10%;height: 24px;padding:0;">				<option value="reform">教改</option>                                        
+								<option value="textbook">教材</option>                                         
+								<option value="research">教研</option>                                         
+								<option value="else">其他</option>                              
+							</select>
+						</div>
+						<label for="applicant">申请人：</label>
+						<input type="text" name="applicant" class="form-control" id="applicant" placeholder="请输入名字">
+						<label for="funds">经费：</label>
+						<input type="number" name="funds" class="form-control" id="funds" placeholder="请输入经费">
+						<label for="intro">简介：</label>
+						<textarea class="form-control" name="intro" rows="3" id="intro" style="resize: none;"></textarea>
+						<br>
+						<label for="file">上传文件：</label>
+						<input type="file" id="file" name="fileUpload" />
+						<br>
+						<a id="submit" class="btn btn-blue">提交</a>
+					</form>
+				</div>
+			</div>
+            <div class="divider-line"></div>
+            
+            
+        </div>
+
+
+
+    </div>
+    
+    
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$("#submit").click(function(){
+			swal({
+            icon:"info",
+            text:"您确定要申请该项目吗？",
+            buttons: ["取消", "确定"],
+        }).then(function(isConfirm) {
+            if(isConfirm === true){
+                var form = document.getElementById("submit-form");  
+                //提交form表单  
+                form.submit();  
+                
+            }
+        });
+		});
+	</script>
+{% endblock %}

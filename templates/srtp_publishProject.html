@@ -1,0 +1,101 @@
+{% extends 'baseAdm.html' %}
+
+{% block title %}发布项目{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+
+<style type="text/css">
+#newTime{
+	color: #3d79e5;
+	
+}
+
+input{
+	margin-bottom: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fly-panel">
+    <div class="schedule">
+		<h4>SRTP项目公布</h4>
+        <div class="divider-line"></div>
+		<div class="panel panel-default">
+            <div class="panel-heading">
+                <h5 class="panel-title">项目公布</h5>
+            </div>
+            <div class="panel-body">
+                <form id="submit-form" action="/srtp/submitPublishProject/" method="POST" enctype="multipart/form-data">
+                    <table class="table table-bordered">
+                        <caption>将要发布的项目如下（如果有误请到项目征集页修改）</caption>
+                        <thead>
+                        <tr>
+                        	<th>项目ID</th>
+                            <th width="40%">题目</th>
+                            <th>人数</th>
+                            <th>教师</th>
+         
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in projects %}
+                            <tr>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.title }}</td>
+                                <td>{{ item.amountPeople }}</td>
+                              	<td>{{ item.guide_teacher }}</td>
+                            </tr>
+                            {% endfor %}
+             
+                        </tbody>
+                    </table>
+                    <label for="title">设置标题:</label>
+                    <input type="text" name="title" class="form-control" id="title" placeholder="请填写标题">
+                    <label for="deadline">设置申报截止时间:</label>
+                    <input type="date" name="deadline" class="form-control" id="deadline" placeholder="请设置截止时间">
+                    <label for="content">发布内容：</label>
+                    <textarea class="form-control" name="content" rows="3" style="resize: none;margin-bottom: 15px;"></textarea>
+                    <input type="file" name="fileUpload" />
+                    <br>
+                    <a id="submit" class="btn btn-blue">公布</a>
+                </form>
+            </div>
+			</div>
+		<div class="divider-line"></div>
+		<p id="newTime"></p>
+                     
+              
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	$("#submit").click(function(){
+        swal({
+            icon:"info",
+            text:"您确定要发布以上项目吗？",
+            buttons: ["取消", "确定"],
+        }).then(function(isConfirm) {
+            if(isConfirm === true){
+                var form = document.getElementById("submit-form");
+                //提交form表单
+                form.submit();
+            }
+        });
+	});
+</script>
+
+<script>
+	window.onload=function(){
+		time();
+	}
+	function time(){
+		var time=new Date();
+		var newTime=document.getElementById("newTime");
+		newTime.innerHTML="当前时间："+time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate();
+	}
+</script>
+{% endblock %}

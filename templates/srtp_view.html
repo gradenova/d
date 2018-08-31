@@ -1,0 +1,204 @@
+{% extends 'baseStu.html' %}
+
+{% block title %}浏览srtp项目{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+#count{
+	color: brown;
+}
+.head{
+	background-color: rgb(149, 196, 236);
+}
+.search-target{
+margin-bottom: 10px;
+width: 30%;
+float: left;
+}
+
+.pagination-option{
+    float:right;
+}
+
+.pagination-pag li {
+    list-style-type:none;
+    float: left;
+    margin-left: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="fly-panel">
+        <div class="schedule search-test-inner">
+            <h4>SRTP项目</h4>
+			<div class="divider-line"></div>
+			<div class="panel panel-default">
+					<div class="panel-heading">
+						<h5 class="panel-title">
+							<p>SRTP申报公告</p>
+						</h5>
+					</div>
+					<div class="panel-body">
+						<p>{{ srtp_announce.title }}</p>
+						<ul>
+							<li><a href="/{{ srtp_announce.Issue_file}}" >{{ file_name }}下载</a></li>
+						</ul>
+					</div>
+			</div>
+			<div class="divider-line"></div>
+
+			<input type="text" class="form-control search-target" placeholder="搜索">
+
+            <div class="pagination-option">
+                <ul class="pagination-pag">
+                    <li><span v-text = "presentPage+' of '+AmountPages"></span></li>
+                    <li>
+                        <a class="btn btn-default btn-sm" v-on:click="clickPageLeft"><i class="glyphicon glyphicon-chevron-left  pag-left"></i></a>
+                    </li>
+                    <li>
+                        <a class="btn btn-default btn-sm" v-on:click="clickPageRight"><i class="glyphicon glyphicon-chevron-right pag-right"></i></a>
+                    </li>
+                </ul>
+            </div>
+
+            <table class="table table-condensed">
+                    <thead class="head">
+                      <tr>
+						<th width="30%">名称</th>
+						<th width="30%">简介</th>
+                        <th>指导教师</th>
+                        <th>人数</th>
+						<th>查看</th>
+                      </tr>
+                    </thead>
+                    <tbody class="search-item-list">
+                    	{% for item in srtp_projects %}
+                      	<tr class="list-item search-item-id" id='ListItem_{{ item.id }}' date-page="1">
+                      		<input type="hidden" class="forSearch search-value" name="forSearch">
+                            <td>{{ item.title }}</td>
+                            <td>{{ item.info }}</td>
+                            <td>{{ item.guide_teacher }}</td>
+							<td>{{ item.amountPeople }}</td>
+							<td>
+								<a class="clickItem" id="clickItem-{{ item.id }}" style="cursor: pointer;">选择</a>
+							</td>
+                      	</tr>
+                      	{% endfor %}
+                    </tbody>
+  				</table>
+            <div class="divider-line"></div>
+            <p>共<span id="count">{{ srtp_projects|length }}</span>条记录</p>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    $(function(){
+        $(".clickItem").click(function(){
+            var deadline = "{{ srtp_announce.deadline|date:'Y-m-d' }}";
+            var deadline_time = new Date(deadline.replace("-","/"));
+
+            var present_date = new Date();
+
+            if(present_date<deadline_time){
+                projectID = $(this).attr("id").split("-")[1];
+                window.location.href = "/srtp/viewSingleProject/?projectID=" + projectID + "";
+            }
+            else{
+                swal({
+                    icon: "error",
+                    text: "抱歉，已过截止时间"
+                });
+            }
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+    var vm_pagination = new Vue({
+        el: '.search-test-inner',
+        data: {
+            AmountofItem: 0,//总共的条目数
+            AmountifItemPrepage: 5,//列表每页的条目数
+            presentPage: 1
+        },
+        computed:{
+            AmountPages:function(){
+                return Math.ceil(this.AmountofItem/this.AmountifItemPrepage);
+            }
+        },
+        methods:{
+            initial:function(){
+
+                {% for item in srtp_projects %}
+
+                this.AmountofItem++;
+
+                $("#ListItem_{{ item.id }}").attr("date-page",Math.ceil(this.AmountofItem/this.AmountifItemPrepage).toString());
+                
+
+                {% endfor %}
+
+                $('.search-item-list > [date-page!='+this.presentPage+']').hide();
+            },
+
+            clickPageLeft:function(){
+                if(this.presentPage>1){
+                    this.presentPage--;
+                }
+                $('.search-item-list > [date-page!='+this.presentPage+']').hide();
+                $('.search-item-list > [date-page='+this.presentPage+']').show();
+            },
+
+            clickPageRight:function(){
+                 if(this.presentPage<Math.ceil(this.AmountofItem/this.AmountifItemPrepage)){
+                    this.presentPage++;
+                 }
+                $('.search-item-list > [date-page!='+this.presentPage+']').hide();
+                $('.search-item-list > [date-page='+this.presentPage+']').show();
+            }
+
+
+        }
+    });
+
+    vm_pagination.initial();
+</script>
+
+<script src="/static/js/jQuery.Hz2Py-min.js"></script>
+<script src="/static/js/jsSearch.js"></script>
+
+<script type="text/javascript">
+    //整合一个项目中所有搜索的信息
+
+    var searchDomArray = $(".search-value").parent();
+
+    var searchInputArray = $(".search-value");
+
+    for(var i=0;i<this.searchDomArray.length;i++){
+
+        var singleValueDomArray = $(searchDomArray[i]).find('td');
+
+        var allSearchValue = '';
+
+        for(var j=0;j<this.singleValueDomArray.length;j++){
+            allSearchValue += $(singleValueDomArray[j]).text();
+        }
+
+        $(searchInputArray[i]).val(allSearchValue);
+    }
+
+    
+    //前端JS实现搜索
+    $(function(){
+        new SEARCH_ENGINE("search-test-inner","search-target","search-item-list","search-value","search-item-id");
+    });
+</script>
+
+{% endblock %}

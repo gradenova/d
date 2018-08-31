@@ -1,0 +1,113 @@
+{% extends 'baseTea.html' %}
+
+{% block title %}学生毕设列表{% endblock %}
+
+{% block style %}
+<!--
+说明：
+该页面为供“教师”查看的学生列表（项目列表）
+其中包括评阅自己指导的学生的毕设、评审其他学生的毕设
+教师点击导航栏中的“毕业设计”会进入此页面
+
+假设学生和毕设项目是一对一的关系，虽然页面显示是学生列表，但是后端渲染的时候可以当成项目列表去渲染
+
+说明编辑人：段旭（设计这个页面的是小明，不关我事orz...）
+-->
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.table>thead>tr>th{
+	background-color: rgb(104, 148, 230);
+}
+.input_info{
+	display: block;
+	width: 100%;
+	height: 34px;
+}
+.table>tbody>tr>td{
+	padding: 5px;
+    height: 30px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+			<div class="fly-panel">
+				<div class="schedule">
+					<h4>毕业设计管理</h4>
+					<div class="divider-line"></div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h5 class="panel-title">我的学生</h5>
+						</div>
+						<div class="panel-body">
+						<table class="table table-bordered">
+						<thead>
+							<tr>
+							<th width="100px">学生学号</th>
+							<th width="100px">学生姓名</th>
+							<th width="100px">学生班级</th>
+							<th width="100px">毕设ID</th>
+							<th width="auto">毕设题目</th>
+							<th width="200px">毕设进度</th>
+							<th width="70px">查看</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for project in projectList_tutor %}
+							<tr>
+								<td>{{ project.studentID }}</td>
+								<td>{{ project.studentName }}</td>
+								<td>{{ project.studentClass }}</td>
+								<td>{{ project.projectID }}</td>
+								<td>{{ project.title }}</td>
+								<td>{{ project.state }}</td>
+								<td><a href="verifyProjectTutor?itemID={{ project.projectID }}">查看</a></td>
+							</tr>
+							{% endfor %}
+						
+						</tbody>
+						</table>
+						</div>
+					</div>
+					<div class="divider-line"></div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h5 class="panel-title">评审学生</h5>
+						</div>
+						<div class="panel-body">
+						<table class="table table-bordered">
+						<thead>
+							<tr>
+							<th width="100px">学生学号</th>
+							<th width="100px">学生姓名</th>
+							<th width="100px">学生班级</th>
+							<th width="100px">毕设ID</th>
+							<th width="auto">毕设题目</th>
+							<th width="100px">评审状态</th>
+							<th width="70px">查看</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for project in projectList_otherTeacher %}
+							<tr>
+								<td>{{ project.studentID}}</td>
+								<td>{{ project.studentName }}</td>
+								<td>{{ project.studentClass }}</td>
+								<td>{{ project.projectID }}</td>
+								<td>{{ project.title }}</td>
+                                <td>{{ project.state }}</td>
+								<td><a href="verifyProjectOtherTeacher?itemID={{ project.projectID }}">查看</a></td>
+							</tr>
+							{% endfor %}
+							
+						</tbody>
+						</table>
+						</div>
+					</div>
+					<div class="divider-line"></div>
+				</div>
+			</div>           
+                {% endblock %}
+
+{% block js %}
+{% endblock %}

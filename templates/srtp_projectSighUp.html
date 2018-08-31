@@ -1,0 +1,199 @@
+<!-- 
+说明：
+该页面为供“学生”报名srtp的页面
+
+在本页面中：
+	点击“提交”时会发出两个请求：
+		1）第一个是报名的基本信息（项目ID、项目名称、项目成员），该请求使用ajax实现
+		2）第二个是报名的文件，该请求使用表单提交实现
+
+	这么设计的原因如下：
+		1）ajax无法提交文件，但是表单提交无法提交数组
+		2）将小组成员组织成数组的请示提交便于后端使用
+
+说明编辑人：段旭
+-->
+
+{% extends 'baseStu.html' %}
+
+{% block title %}srtp项目申报{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+#textShow{
+    padding: 20px;
+}
+#title{
+    text-align: center;
+}
+#viewItem{
+    margin-top: -20px;
+    float: right;
+}
+.unShow{
+    display: none;
+}
+.show{
+    display: block;
+}
+input{
+	border: 1px solid #adadad;
+    vertical-align: middle;
+    border-radius: 3px;
+    height: 30px;
+    padding: 0px 16px;
+    margin: 0 5px;
+    font-size: 14px;
+    color: #555555;
+    outline: none;
+    color: black;
+}
+
+.member{
+	margin: 8px 0;
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+            <div class="fly-panel">
+                <div class="schedule">
+                    <h4>消息内容</h4>
+                    <a id="viewItem" href="/srtp/srtp_view">查看项目</a>
+					<div class="divider-line"></div>
+					<div class="panel panel-default">
+                        <div class="page-header">
+                            <h4 id="title">{{ project.title }}</h4>
+                        </div>
+                        <p id="textShow">{{ project.info }}</p>
+                    </div>
+                    <a class="btn btn-blue"  onclick="myFun(),add0()">申报</a>
+                    <div class="divider-line"></div>
+                    <div class="unShow" id="srtp">
+	                    <div class="panel panel-default">
+	                        <div class="panel-heading">
+	                            <h5 class="panel-title">
+	                                    <p>SRTP项目申报</p>
+	                                </h5>
+	                        </div>
+	                        <div class="panel-body">
+
+	                                <div style="margin: 8px 0px;">
+	                                    <label for="title">项目名称:</label>
+	                                    <input id="projectName" name="title" type="text" placeholder="请输入名称">
+	                                </div>
+	                                <div id="org"></div>
+									<a class="btn btn-blue" onclick="add1()">添加队员</a>
+									<br>
+									<form id="file-submit-form" method="POST" action="/srtp/submitSrtpSignUpFile_Info/" enctype="multipart/form-data">
+										<input type="hidden" name="projectID" value="{{ project.id }}">
+                                        <label for="name" style="margin-top: 18px;">申报材料:</label>
+										<input id="projectFile" type="file" name="fileUpload" style="border: none;padding: 0;margin: 5px 0;" />
+										<br>
+										<a id="submit-file" class="btn btn-blue">上传文件</a>
+		                                <a id="submit1" class="btn btn-blue">提交</a>
+									</form>
+
+
+
+	                        </div>
+	                    </div>
+                	</div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block js %}
+<script>
+var amountOfMember = 1;
+function myFun(){
+    var tabcontent, tablinks;
+	tabcontent = document.getElementById("srtp");
+    if(tabcontent.className=="show")tabcontent.className="unShow"
+    else tabcontent.className="show"
+}
+function add0(){
+	var txt1='<div class="member"><label >队长: </label>'+
+    "<input type='text' class='college' placeholder='学院'>"+
+    "<input type='text' class='class' placeholder='班级'>"+
+	"<input type='text' class='name' placeholder='姓名'>"+
+	"<input type='number' class='stuID' placeholder='学号'>"+
+	"<br>"+
+	"</div>"
+    $("#org").append(txt1);
+}
+
+function add1(){
+	if(amountOfMember>=5){
+		swal({
+			icon: "error",
+			text: "队内人数不得超过5人",
+		});
+	}
+	else{
+		amountOfMember++;
+		var txt1='<div class="member"><label >队员: </label>'+
+	    "<input type='text' class='college' placeholder='学院'>"+
+	    "<input type='text' class='class' placeholder='班级'>"+
+		"<input type='text' class='name' placeholder='姓名'>"+
+		"<input type='number' class='stuID' placeholder='学号'>"+
+		"<a class='delete-member' style='cursor:pointer;' onclick='$(this).parent().remove();amountOfMember--;'>删除</a><br>"+
+		"</div>"
+	    $("#org").append(txt1);
+	}
+
+}
+</script>
+<script type="text/javascript">
+	$("#submit-file").click(function(){
+		//文件提交
+        var fileform = document.getElementById("file-submit-form");
+        //提交form表单
+        fileform.submit();
+	});
+
+	$("#submit1").click(function(){
+		var memberArray = [];
+		$memberDOM = $(".member");
+		for(var i=0;i<$memberDOM.length;i++){
+			memberInfo = {};
+			memberInfo['college'] = $($memberDOM[i]).children(".college").val();
+			memberInfo['class'] = $($memberDOM[i]).children(".class").val();
+			memberInfo['name'] = $($memberDOM[i]).children(".name").val();
+			memberInfo['stuID'] = $($memberDOM[i]).children(".stuID").val();
+			memberArray[i] = memberInfo;
+		}
+
+		//信息提交
+		$.ajax({
+            cache: false,
+            type: "POST",
+            url:"/srtp/submitSrtpSignUp_Info/",//这里路径根据后端修改
+            data: {
+            	projectID:"{{ project.id }}",
+              	projectName:$("#projectName").val(),
+              	projectMember:memberArray,
+                amountOfMember:$memberDOM.length ,
+            },
+            dateType:"json",
+            async: true,
+            success: function(data) {
+                if(data.status == 'success'){
+                    swal ({
+                        icon: "success",
+                        text: "提交成功",
+                    })
+                }else if(data.status == 'fail'){
+                    swal ({
+                        icon: "error",
+                        text: "提交失败，请重试",
+                    });
+                }
+            }
+        });
+
+	});
+</script>
+{% endblock %}

@@ -1,0 +1,116 @@
+
+{% extends 'baseTea.html' %}
+
+{% block title %}提交项目进度{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+	
+	.th{
+		
+		background-color: rgb(196, 196, 230);
+	}
+	.td{
+		background-color: rgb(186, 187, 190);
+	}
+	.panel-primary{
+		background-color: rgb(186, 187, 190);
+		border-color: rgb(196, 196, 230);
+	}
+	.panel-primary>.panel-heading{
+		color: black;
+		background-color: rgb(196, 196, 230);
+		border-color: rgb(196, 196, 230);
+	}
+	#submit{
+		float: right;
+		margin-top: -30px;
+	}
+	</style>
+{% endblock %}
+
+{% block content %}
+			<div class="fly-panel">
+				<div class="schedule">
+					<h4>进程汇报</h4>
+					<div class="divider-line"></div>
+					<div class="panel-body">
+						<h5>>>查看提交内容</h5>
+						<table class="table table-bordered">
+							<tbody>
+								<tr>
+									<th class="th">标题</th>
+									<td class="td">{{ processCheckItem.title }}</td>
+								</tr>
+								<tr>
+									<th class="th">任务类型</th>
+									<td class="td">{{ processCheckItem.kind }}</td>
+								</tr>
+								<tr>
+                                    <th class="th">内容</th>
+									<td class="td">{{ processCheckItem.content }}</td>
+								</tr>
+                                <tr>
+									<th class="th">截止时间</th>
+									<td class="td">{{ processCheckItem.deadline }}</td>
+								</tr>
+							</tbody>
+					  </table>
+					  <h5>>>提交文件</h5>
+					  <div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									<p>提交你的文件</p>
+								</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-bordered">
+									<thead class="head">
+									  <tr>
+										<th width="80px;">组号</th>
+										<th width="200px;">项目名称</th>
+										<th width="100px;">申请人</th>
+										<th width="100px;">提交状态</th>
+										<th width="">上传文件</th>
+										<th width="80px;">提交</th>
+									  </tr>
+									</thead>
+									<tbody>
+									 <tr>
+									 {% for verifyItem in verifyItems %}
+										<form method="post" action="/srtp/submitProcessCheck/" enctype="multipart/form-data" >
+											<input type="hidden" name="itemID" value="{{ verifyItem.id }}">
+                                            <input type="hidden" name="TaskID" value="{{ processCheckItem.id }}">
+											<input type="hidden" name="itemKind" value="{{ processCheckItem.kind }}">
+											<td>{{ verifyItem.id }}</td>
+											<td>{{ verifyItem.TPA_belong.title }}</td>
+											<td>{{ verifyItem.apply_people.username }}</td>
+                                            {% if processCheckItem.kind == 'mid' %}
+                                            <td>{{ verifyItem.medium_status }}</td>
+                                            {%  else  %}
+                                            <td>{{ verifyItem.final_status }}</td>
+                                            {% endif  %}
+											<td><input type="file" name="fileUpload" /></td>
+											<td>
+												<button type="submit">提交</button>
+											</td>
+
+										</form>
+									  </tr>
+									{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+					</div>
+					<div class="divider-line"></div>
+
+
+				</div>
+
+			</div>
+
+
+{% endblock %}

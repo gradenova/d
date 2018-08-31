@@ -1,0 +1,123 @@
+<!-- 
+说明：
+该页面为供“教师”对“其他”学生毕业设计进行评审的项目详情（审批）页面
+在教师的学生项目列表页中点击某个项目的“评审”会进入此页面
+
+
+说明编辑人：段旭（设计这个页面的是小明，不关我事orz...）
+-->
+{% extends 'baseTea.html' %}
+
+{% block title %}毕设项目评审{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style>
+	.table>tbody>tr>th{
+	background-color: #6898ee;
+	}
+	.unShow{
+		display: none;
+	}
+	.show{
+		display: block;
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+			<div class="fly-panel">
+				<div class="schedule">
+					<h4>毕业设计评审</h4>
+					<div class="divider-line"></div>
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h5 class="panel-title">学生信息</h5>
+							</div>
+							<div class="panel-body">
+								<table class="table table-bordered">
+									<tbody>
+										<tr>
+											<th width="100px">毕设题目：</th>
+											<td colspan="3">{{ project.title }}</td>
+										</tr>
+										<tr>
+											<th width="100px">学生：</th>
+											<td colspan="3">{{ project.studentName }}</td>
+										</tr>
+										<tr>
+											<th width="100px">学生班级：</th>
+											<td colspan="3">{{ project.studentClass }}</td>
+										</tr>
+										<tr>
+											<th width="100px">学生学号：</th>
+											<td colspan="3">{{ project.studentID }}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="divider-line"></div>
+
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h5 class="panel-title">评审内容</h5>
+							</div>
+							<div class="panel-body">
+								<table class="table table-bordered">
+									<thead>
+										<th></th>
+										<th>学生报告</th>
+										<th>我的审核</th>
+										<th>操作</th>
+									</thead>
+									<tbody>
+										<tr>
+											<th>毕业设计:</th>
+											<td>
+												<a href="/file/graduation/{{ project.GraduationReport }}" title="点击下载">{{ project.GraduationName }}</a>
+											</td>
+											<td>
+												<a href="/file/graduation/{{ project.GraduationPaperFormAss }}" title="点击下载">{{ project.GraduationRemarkAssName }}</a>
+											</td>
+											{% if not project.GraduationName %}
+												<td><a onclick="myFun()"></a></td>
+											{% else %}
+												<td><a onclick="myFun()">评审</a></td>
+											{% endif %}
+										</tr>
+									</tbody>
+								</table>  
+							</div>
+						</div>
+					<div class="unShow" id="verify">
+					<div class="panel panel-primary">
+                        <div class="panel-heading">
+							<h5 class="panel-title">评审</h5>
+                        </div>
+                        <div class="panel-body">
+                            <form method="POST" action="/graduation/teacher/verifyProjectOtherTeacher?itemID={{ project.projectID }}&studentID={{ project.studentID }}" enctype='multipart/form-data'>
+								<label for="name">评审表:</label>
+								<input type="file" name="fileUpload" />
+								<br>
+                                <button type="submit" class="btn btn-blue">提交</button>
+                            </form>  
+                        </div>
+					</div>
+					<div class="divider-line"></div>
+					</div>
+				</div>
+			</div>           
+        {% endblock %}
+
+{% block js %}
+<script>
+	function myFun(){
+    var tabcontent, tablinks;
+	tabcontent = document.getElementById("verify");
+    if(tabcontent.className=="show")tabcontent.className="unShow"
+    else tabcontent.className="show"
+}
+</script>
+{% endblock %}

@@ -1,0 +1,155 @@
+
+{% extends 'baseAdm.html' %}
+
+{% block title %}教学项目审批{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+    
+	.head{
+        width: 20%;
+    }
+    
+</style>
+{% endblock %}
+
+{% block content %}
+            <div class="fly-panel">
+                <div class="schedule">
+                    <h4>教改/教材/教研项目审核</h4>
+                    <div class="divider-line"></div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h5 class="panel-title">>>项目</h5>
+                        </div>
+                        <div class="panel-body">
+                        <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th class="head">审批类型</th>
+                                        <td >{{ verifyTask.type }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="head">项目ID</th>
+                                        <td >{{ project.id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="head">项目名称</th>
+                                        <td >{{ project.title }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="head">项目类型</th>
+                                        <td >
+                                            {% if project.category == "reform" %}
+                                                教改
+                                            {% elif project.category == "textbook" %}
+                                                教材
+                                            {% elif project.category == "research" %}
+                                                教研
+                                            {% else %}
+                                                其他
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="head">项目相关文件</th>
+                                        <td >
+                                            <a href="/{{ files.file_path }}" >{{ files.file_name }}</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="head">申请人</th>
+                                        <td >{{ project.applicant }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="head">申请时间</th>
+                                        <td >{{ project.apply_time }}</td>
+                                    </tr>
+                                    
+                                </tbody>
+                          </table>      
+                        </div>
+                    </div>
+                    
+                    <div class="divider-line"></div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h5 class="panel-title">>>审核</h5>
+                        </div>
+                        <div class="panel-body">
+                            <form id="submit-form" role="form">
+                                <div class="form-group">
+                                <label for="name">是否通过:</label>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="pass" checked>通过
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="fail" checked>不通过
+                                    </label>
+                                </div>
+                                </div>
+                                <br>
+                                <input type="hidden" name="projectID" value="{{ project.id }}">
+                                <input type="hidden" name="type" value="{{ verifyTask.type }}">
+                                <a id="submit1" class="btn btn-blue">提交</a>
+                           </form>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$("#submit1").click(function(){
+			$.ajax({
+                cache: false,
+                type: "POST",
+                url:"/teaching/teachingJudgeAdm/",
+                data:$('#submit-form').serialize(),
+                dateType:"json",
+                async: true,
+                success: function(data) {
+                    if(data.status == 'success'){
+                        swal ({
+						 	icon: "success",
+						 	text: "提交成功",
+				 		}).then(function(isConfirm){
+				 			window.location.href = data.url;
+				 		});
+                    }else if(data.status == 'fail'){
+                        swal ({
+						 	icon: "error",
+						 	text: "提交失败请重试",
+				 		});
+                    }
+                }
+            });
+		});
+	</script>
+{% endblock %}
+
+
+<!--
+说明：
+该页面为供“管理员”审核项目的复用页面
+管理员有三种情况会进入此页面：
+    1）审核“项目申请”
+    2）审核“中期检查”
+    3）审核“结题验收”
+
+部分Django变量说明：
+    1）审批类型中的“{{ verifyTask.type }}”传当前具体审核的项目（项目申请/中期检查/结题验收）
+    2）项目相关文件中的{{ project.file }}传当前申请内容的文件，例如“项目申请表”，“中期检查表”，”结题验收表“
+
+说明编辑人：段旭
+-->

@@ -1,0 +1,202 @@
+
+{% extends 'baseAdm.html' %}
+
+{% block title %}课程信息管理{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+
+<style type="text/css">
+.table>thead>tr>th{
+	background-color: rgb(166, 197, 255);
+}
+.input_info{
+	display: block;
+	width: 100%;
+	outline: none;
+	border: none;
+}
+.table>tbody>tr>td{
+	height: 34px;
+}
+.btn_delete{
+	background-color: rgb(138, 167, 231);
+	margin: 1px;
+	width: 100%;
+	padding: 0px;
+}
+
+a.delete{
+    cursor: pointer;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"]{
+  -moz-appearance: textfield;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+	<div class="fly-panel">
+		<div class="schedule">
+			<h4>课程信息管理</h4>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">添加课程信息</h5>
+				</div>
+				<div class="panel-body">
+					<form id="ajax-submit-form1">
+						<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th width="100px">课程ID</th>
+								<th>课程名称</th>
+                                <th width="200px">理论课学时</th>
+                                <th width="200px">实验课学时（没有则写0）</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><input name="ID" type="number" class="input_info"  placeholder="课程ID"></td>
+								<td><input name="name" type="text" class="input_info"  placeholder="课程名称"></td>
+	                            <td><input name="theoryHours" type="number" class="input_info"  placeholder="理论课学时"></td>
+	                            <td><input name="labHours" type="number" class="input_info"  placeholder="实验课学时"></td>
+							</tr>
+						</tbody>
+						</table>
+						<a id="ajax-submit1" class="btn btn-blue">提交</a>
+					</form>
+				</div>
+			</div>
+			<div class="divider-line"></div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">添加排课信息</h5>
+				</div>
+				<div class="panel-body">
+					<form id="ajax-submit-form">
+						<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th width="100px">课程ID</th>
+								<th>课程名称</th>
+								<th width="100px">老师ID</th>
+								<th width="100px">老师姓名</th>
+                                <th width="200px">上课班级</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><input name="ID" type="number" class="input_info"  placeholder="课程ID"></td>
+								<td><input name="name" type="text" class="input_info"  placeholder="课程名称"></td>
+								<td><input name="teacherID" type="number" class="input_info"  placeholder="老师ID"></td>
+								<td><input name="teacherName" type="text" class="input_info"  placeholder="老师姓名"></td>
+								<td><input name="class" type="text" class="input_info" placeholder="上课班级"></td>
+							</tr>
+						</tbody>
+						</table>
+						<a id="ajax-submit" class="btn btn-blue">提交</a>
+					</form>
+				</div>
+			</div>
+			<div class="divider-line"></div>
+			<div class="panel panel-default">
+					<div class="panel-heading">
+						<h5 class="panel-title">排课信息</h5>
+					</div>
+					<div class="panel-body">
+						<table class="table table-bordered" style="margin: 0px;">
+						<thead>
+							<tr>
+								<th width="100px">课程ID</th>
+								<th width="200px">课程名称</th100px>
+								<th width="100px">老师ID</th>
+								<th width="100px">老师姓名</th>
+                                <th width="200px">上课班级</th>
+								<th width="100px">理论课学时</th>
+								<th width="100px">实验课学时</th>
+								<th width="50px">删除</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for course in courseArrangeList %}
+							<tr>
+								<td>{{ course.sid }}</td>
+								<td>{{ course.name }}</td>
+								<td>{{ course.teacherID }}</td>
+								<td>{{ course.teacherName }}</td>
+								<td>{{ course.classes }}</td>
+								<td>{{ course.theoryHours }}</td>
+								<td>{{ course.labHours }}</td>
+								<td style="text-align: center;"><a href="/course/courseChange/courseArrangeDelete?courseID={{ course.sid }}&teacherID={{ course.teacherID }}&className={{ course.classes }}" class="delete">删除</a></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+						</table>
+					</div>
+			</div>
+		</div>
+	</div>           
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	$("#ajax-submit").click(function(){
+		$.ajax({
+            cache: false,
+            type: "POST",
+            url:"/course/courseChange/",
+            data: $("#ajax-submit-form").serialize(),
+            dateType:"json",
+            async: true,
+            success: function(data) {
+                if(data.status == 'success'){
+                	swal({
+                		icon:"success",
+                		text: data.msg,
+                		}).then(function(isConfirm){
+                		window.location.reload();
+                		});
+                }else if(data.status == 'fail'){
+                    swal ({
+                        icon: "error",
+                        text: data.msg,
+                    });
+                }
+            }
+        });
+	});
+</script>
+
+<script type="text/javascript">
+	$("#ajax-submit1").click(function(){
+		$.ajax({
+            cache: false,
+            type: "POST",
+            url:"/course/courseChange/",
+            data: $("#ajax-submit-form1").serialize(),
+            dateType:"json",
+            async: true,
+            success: function(data) {
+                if(data.status == 'success'){
+                	swal({
+                		icon:"success",
+                		text: data.msg,
+                		}).then(function(isConfirm){
+                		window.location.reload();
+                		});
+                }else if(data.status == 'fail'){
+                    swal ({
+                        icon: "error",
+                        text: data.msg,
+                    });
+                }
+            }
+        });
+	});
+</script>
+{% endblock %}

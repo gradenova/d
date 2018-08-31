@@ -1,0 +1,310 @@
+{% extends 'baseAdm.html' %}
+
+{% block title %}项目详情{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.search-target1{
+margin-bottom: 10px;
+width: 30%;
+float: left;
+}
+
+.search-target2{
+margin-bottom: 10px;
+width: 30%;
+float: left;
+}
+
+.pagination-option{
+    float:right;
+}
+
+.pagination-pag li {
+    list-style-type:none;
+    float: left;
+    margin-left: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fly-panel">
+        <div class="schedule search-test-inner">
+            <h4>教学项目进度</h4>
+            <div class="divider-line"></div>
+            <div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">中期检查待审项目</h5>
+				</div>
+				<div class="panel-body">
+					
+					<input type="text" class="form-control search-target1" placeholder="搜索">
+
+			        <div class="pagination-option">
+			            <ul class="pagination-pag">
+			                <li><span v-text = "presentPage1+' of '+AmountPages1"></span></li>
+			                <li>
+			                    <a class="btn btn-default btn-sm" v-on:click="clickPageLeft1"><i class="glyphicon glyphicon-chevron-left  pag-left"></i></a>
+			                </li>
+			                <li>
+			                    <a class="btn btn-default btn-sm" v-on:click="clickPageRight1"><i class="glyphicon glyphicon-chevron-right pag-right"></i></a>
+			                </li>
+			            </ul>
+			        </div>
+
+					<table class="table table-bordered">
+						<thead>
+						  <tr>
+						  	<th>项目ID</th>
+							<th>项目名称</th>
+							<th>项目类别</th>
+                            <th>项目负责人</th>
+                            <th>项目进度</th>
+                            <th>项目详情</th>
+                            <th>项目审批</th>
+						  </tr>
+						</thead>
+						<tbody class="search-item-list1">
+							{% for item in midAppliedProjects %}
+						  	<tr class="list-item search-item-id1" id='ListItem1_{{ item.id }}' date-page="1">
+						  		<input type="hidden" class="forSearch search-value1" name="forSearch">
+								<td>{{ item.id }}</td>
+								<td>{{ item.title }}</td>
+	                            <td>{{ item.get_category_display }}</td>
+	                            <td>{{ item.applicant }}</td>
+	                            <td>{{ item.process }}</td>
+	                            <td>
+	                                <a href="/teaching/readProjectDetailAdm?type=mid&itemID={{ item.id }}">查看详情</a>
+	                            </td>
+	                            <td>
+	                                <a href="/teaching/verifyProcessApplication?type=mid&itemID={{ item.id }}">进入审批</a>
+	                            </td>
+						  	</tr>
+						  	{% endfor %}
+						</tbody>
+					</table>
+				
+				</div>
+            </div>
+			<div class="divider-line"></div>   
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">结题验收待审项目</h5>
+				</div>
+				<div class="panel-body">
+
+					<input type="text" class="form-control search-target2" placeholder="搜索">
+
+			        <div class="pagination-option">
+			            <ul class="pagination-pag">
+			                <li><span v-text = "presentPage2+' of '+AmountPages2"></span></li>
+			                <li>
+			                    <a class="btn btn-default btn-sm" v-on:click="clickPageLeft2"><i class="glyphicon glyphicon-chevron-left  pag-left"></i></a>
+			                </li>
+			                <li>
+			                    <a class="btn btn-default btn-sm" v-on:click="clickPageRight2"><i class="glyphicon glyphicon-chevron-right pag-right"></i></a>
+			                </li>
+			            </ul>
+			        </div>
+					
+					<table class="table table-bordered">
+						<thead>
+						  <tr>
+						  	<th>项目ID</th>
+							<th>项目名称</th>
+							<th>项目类别</th>
+                            <th>项目负责人</th>
+                            <th>项目进度</th>
+                            <th>项目详情</th>
+                            <th>项目审批</th>
+						  </tr>
+						</thead>
+						<tbody class="search-item-list2">
+						  {% for item in finAppliedProjects %}
+						  	<tr class="list-item search-item-id2" id='ListItem2_{{ item.id }}' date-page="1">
+						  		<input type="hidden" class="forSearch search-value2" name="forSearch">
+								<td>{{ item.id }}</td>
+								<td>{{ item.title }}</td>
+	                            <td>{{ item.get_category_display }}</td>
+	                            <td>{{ item.applicant }}</td>
+	                            <td>{{ item.process }}</td>
+	                            <td>
+	                                <a href="/teaching/readProjectDetailAdm?type=fin&itemID={{ item.id }}">查看详情</a>
+	                            </td>
+	                            <td>
+	                                <a href="/teaching/verifyProcessApplication?type=fin&itemID={{ item.id }}">进入审批</a>
+	                            </td>
+						  	</tr>
+						  	{% endfor %}
+						</tbody>
+					</table>
+				
+				</div>
+			</div>
+        </div>
+
+
+
+    </div>
+    
+    
+{% endblock %}
+
+
+{% block js %}
+
+<script type="text/javascript">
+    var vm_pagination = new Vue({
+        el: '.search-test-inner',
+        data: {
+            AmountofItem1: 0,//总共的条目数
+            AmountifItemPrepage1: 5,//列表每页的条目数
+            presentPage1: 1,
+            AmountofItem2: 0,//总共的条目数
+            AmountifItemPrepage2: 5,//列表每页的条目数
+            presentPage2: 1
+        },
+        computed:{
+            AmountPages1:function(){
+                return Math.ceil(this.AmountofItem1/this.AmountifItemPrepage1);
+            },
+            AmountPages2:function(){
+                return Math.ceil(this.AmountofItem2/this.AmountifItemPrepage2);
+            }
+        },
+        methods:{
+            initial:function(){
+
+                {% for item in midAppliedProjects %}
+
+                this.AmountofItem1++;
+
+                $("#ListItem1_{{ item.id }}").attr("date-page",Math.ceil(this.AmountofItem1/this.AmountifItemPrepage1).toString());
+                
+
+                {% endfor %}
+
+                $('.search-item-list1 > [date-page!='+this.presentPage1+']').hide();
+
+
+                {% for item in finAppliedProjects %}
+
+                this.AmountofItem2++;
+
+                $("#ListItem2_{{ item.id }}").attr("date-page",Math.ceil(this.AmountofItem2/this.AmountifItemPrepage2).toString());
+                
+
+                {% endfor %}
+
+                $('.search-item-list2 > [date-page!='+this.presentPage2+']').hide();
+            },
+
+            clickPageLeft1:function(){
+                if(this.presentPage1>1){
+                    this.presentPage1--;
+                }
+                $('.search-item-list1 > [date-page!='+this.presentPage1+']').hide();
+                $('.search-item-list1 > [date-page='+this.presentPage1+']').show();
+            },
+
+            clickPageRight1:function(){
+                 if(this.presentPage1<Math.ceil(this.AmountofItem1/this.AmountifItemPrepage1)){
+                    this.presentPage1++;
+                 }
+                $('.search-item-list1 > [date-page!='+this.presentPage1+']').hide();
+                $('.search-item-list1 > [date-page='+this.presentPage1+']').show();
+            },
+
+         	clickPageLeft2:function(){
+                if(this.presentPage2>1){
+                    this.presentPage2--;
+                }
+                $('.search-item-list2 > [date-page!='+this.presentPage2+']').hide();
+                $('.search-item-list2 > [date-page='+this.presentPage2+']').show();
+            },
+
+            clickPageRight2:function(){
+                 if(this.presentPage2<Math.ceil(this.AmountofItem2/this.AmountifItemPrepage2)){
+                    this.presentPage2++;
+                 }
+                $('.search-item-list2 > [date-page!='+this.presentPage2+']').hide();
+                $('.search-item-list2 > [date-page='+this.presentPage2+']').show();
+            }
+
+
+        }
+    });
+
+    vm_pagination.initial();
+</script>
+
+<script src="/static/js/jQuery.Hz2Py-min.js"></script>
+<script src="/static/js/jsSearch.js"></script>
+
+<script type="text/javascript">
+    //整合一个项目中所有搜索的信息
+
+    var searchDomArray1 = $(".search-value1").parent();
+
+    var searchInputArray1 = $(".search-value1");
+
+    for(var i=0;i<this.searchDomArray1.length;i++){
+
+        var singleValueDomArray1 = $(searchDomArray1[i]).find('td');
+
+        var allSearchValue1 = '';
+
+        for(var j=0;j<this.singleValueDomArray1.length;j++){
+            allSearchValue1 += $(singleValueDomArray1[j]).text();
+        }
+
+        $(searchInputArray1[i]).val(allSearchValue1);
+    }
+
+    
+    //前端JS实现搜索
+    $(function(){
+        new SEARCH_ENGINE1("search-test-inner","search-target1","search-item-list1","search-value1","search-item-id1","presentPage1");
+    });
+
+
+    //整合一个项目中所有搜索的信息
+
+    var searchDomArray2 = $(".search-value2").parent();
+
+    var searchInputArray2 = $(".search-value2");
+
+    for(var i=0;i<this.searchDomArray2.length;i++){
+
+        var singleValueDomArray2 = $(searchDomArray2[i]).find('td');
+
+        var allSearchValue2 = '';
+
+        for(var j=0;j<this.singleValueDomArray2.length;j++){
+            allSearchValue2 += $(singleValueDomArray2[j]).text();
+        }
+
+        $(searchInputArray2[i]).val(allSearchValue2);
+    }
+
+    
+    //前端JS实现搜索
+    $(function(){
+        new SEARCH_ENGINE2("search-test-inner","search-target2","search-item-list2","search-value2","search-item-id2","presentPage2");
+    });
+</script>
+{% endblock %}
+
+<!--
+说明：
+该页面为供管理员（秘书）提供的项目进度审批列表页
+管理员在导航栏中点击“项目进度”会进入这个页面
+
+在本页面中一列表的形式显示教师提交的中期检查和结题验收请求。
+管理员可以点击“查看详情”进入“项目详情页Adm”来查看该项目的详细信息。
+可以点击“进入审批”进入“进度审批页”来进行项目的审批。
+
+说明编辑人：段旭
+-->

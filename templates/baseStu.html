@@ -1,0 +1,25 @@
+
+{% extends '__base__.html' %}
+
+{% block nav %}
+<li><a href="{% url 'index' %}">首页</a></li>
+
+
+<li id="li-2"><a href="##">SRTP管理</a><span></span>
+	<div id="box-2" class="hidden-box">
+		<ul>
+			<a href="/srtp/srtp_view/"><li>查看项目</li></a>
+		</ul>
+	</div>
+</li>
+
+
+<li id="li-3"><a>毕业设计管理</a><span></span>
+	<div id="box-3" class="hidden-box">
+		<ul>
+			<a href="{% url 'graduation_student' %}"><li>个人毕设</li></a>
+		</ul>
+	</div>
+</li>
+{% endblock %}
+			

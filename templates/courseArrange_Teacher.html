@@ -1,0 +1,377 @@
+
+{% extends 'baseTea.html' %}
+
+{% block title %}排课{% endblock %}
+
+{% block style %}
+<link href="/static/css/bootstrap-select.min.css" rel="stylesheet" />
+<link href="/static/css/dxStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+	.hoursInputBlock{
+		width: 100%!important;
+		height: 100%;
+		border: none;
+	}
+
+	.hoursInputBlock span{
+		color: black!important; 
+	}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+			<div class="fly-panel">
+				<div class="schedule">
+					<h4>排课意向表（当前课程：{{ course.name }}   学时：{{ course.totalHours }}）</h4>
+					<div class="divider-line"></div>
+					<p>注：本页面选择的意向仅针对以上课程</p>
+					<div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h5 class="panel-title">
+                                请填写<span style="color: black; font-weight:600; font-size: 16px;">理论课</span>各周授课学时（必填）
+                            </h5>
+                        </div>
+                        <div class="panel-body">
+                        	<table class="weekhours-table">
+								<tr id="weekhours-title-row-1">
+
+								</tr>
+
+								<tr id="weekhours-row-1">
+
+								</tr>
+
+								<tr id="weekhours-title-row-2">
+
+								</tr>
+
+								<tr id="weekhours-row-2">
+
+								</tr>
+								
+							</table>
+                    	</div>
+                    </div>
+
+                    <div class="lab-wraper">
+                    	<p style="display: inline;">如果本课程开设实验课则点击此处：</p>
+                    	<button id="add-lab-schedule" class="btn btn-blue" style="display: inline;">添加实验课</button>
+                    </div>
+                    
+
+
+					<div class="divider-line"></div>
+					<div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h5 class="panel-title">
+                                请过滤您具体的<span style="color: black; font-weight:600; font-size: 16px;">理论课</span>授课时间地点（非必填，不填代表没有特殊需求)
+                            </h5>
+                        </div>
+                        <div class="panel-body">
+		                    <div class="schedule-table-wraper">
+								<table class="schedule-table">
+									<tr>
+										<th></th>
+										<th>星期一</th>
+										<th>星期二</th>
+										<th>星期三</th>
+										<th>星期四</th>
+										<th>星期五</th>
+										<th>星期六</th>
+										<th>星期日</th>
+									</tr>
+									<tr id="row-1">
+										<th>上午(一)<br/>8:00-9:35</th>
+									</tr>
+									<tr id="row-2">
+										<th>上午(二)<br/>9:55-11:30</th>
+									</tr>
+									<tr id="row-3">
+										<th>中午(一)<br/>13:30-15:05</th>
+									</tr>
+									<tr id="row-4">
+										<th>下午(一)<br/>15:20-16:55</th>
+									</tr>
+									<tr id="row-5">
+										<th>下午(二)<br/>17:10-18:45</th>
+									</tr>
+									<tr id="row-6">
+										<th>晚上(一)<br/>19:30-21:05</th>
+									</tr>
+									<input id="schedule-nprefer-input" type="hidden" name="schedule-nprefer">
+								</table>
+
+								<table class="clsroom-table">
+									<tr>
+										<th></th>
+										<th>逸夫楼</th>
+										<th>教学楼</th>
+										<th>机电楼</th>
+									</tr>
+									<tr id="clsroom-row-1">
+										<th>请选择您不想上课的地点</th>
+										<td id="clsroom-td-1">点击此处</td>
+										<td id="clsroom-td-2">点击此处</td>
+										<td id="clsroom-td-3">点击此处</td>
+									</tr>
+									
+									<input id="clsroom-nprefer-input" type="hidden" name="clsroom-nprefer">
+								</table>
+
+								<div class="remarks">
+									<p>备注(非必填)：</p>
+									<div class="remark-input">
+										<input id="remarks" type="text" name="remarks" maxlength="50" placeholder="输入备注">
+									</div>
+								</div>
+								
+							</div>
+
+
+
+                        </div>
+                    </div>
+					<div class="divider-line"></div>
+					<div class="schedule-intro">
+						<p>排课说明：<br/>1、点击「理论课/实验课各周授课学时」中单元格可以输入各周上课的学时，相加必须为课程总学时。<br/>2、点击「理论课授课时间地点」中单元格可以过滤掉不想上课的时段。<br/>3、正常情况下系统不会在周末排课，但若由于特殊原因需要在周末上课，请在备注处注明。<br/>4、上述排课表代表您所有课程的意向，如有具体要求，请在备注处注明。<br/>5、若有其他特殊需求，请在备注处注明。<br/>
+						</p>
+					</div>
+					<div class="divider-line"></div>
+					<button id="save-schedule" class="btn btn-blue">保存</button>
+					
+				</div>
+			</div>
+{% endblock %}
+			
+			
+		
+
+{% block js %}
+<script src="/static/js/bootstrap-select.min.js"></script>
+
+<script type="text/javascript">
+	function renderScheduleInside(){
+		for(var row = 1; row <= 6; row++){
+			for(var col = 1; col <= 7; col++){
+				if(col == 6 || col == 7){
+					$('#row-' + row).append('<td id="td-'+ row + '-' + col + '" class="SatAndSun"></td>');
+				}
+				else{
+					$('#row-' + row).append('<td id="td-'+ row + '-' + col + '">点击此处</td>');
+				}
+			}
+		}
+	}
+	renderScheduleInside();
+</script>
+
+<script type="text/javascript">
+	function renderWeekHoursInside(blockname){
+		var counter = 1;
+		for(var row = 1; row <= 2; row++){
+			for(var col = 1; col <= 8; col++){
+				$('#' + blockname + '-title-row-' + row).append('<th>第' + counter + '周</th>');
+
+				$('#' + blockname + '-row-' + row).append(
+					'<td id="'+blockname+'-td-'+ counter + '">'+
+						'<select class="selectpicker hoursInputBlock" id="'+blockname+'-input-td-'+ counter + '" name="'+blockname+'-td-'+ counter + '">'+
+							'<option value="0">0</option>'+
+							'<option value="2">2</option>'+
+							'<option value="4">4</option>'+
+							'<option value="6">6</option>'+
+						'</select>'+
+						//'<input id="'+blockname+'-input-td-'+ counter + '" type="text" name="'+blockname+'-td-'+ counter + '">'+
+					'</td>'
+					);
+				counter++;
+			}
+		}
+	}
+	renderWeekHoursInside("weekhours");
+</script>
+
+<script type="text/javascript">
+	var labflag = 0;
+	$("#add-lab-schedule").click(function(){
+		if(labflag === 0){
+			$(".lab-wraper").append('<div class="panel panel-default lab" style="margin-top: 16px;">'+
+                        '<div class="panel-heading">'+
+                           '<h5 class="panel-title">'+
+                                '请填写<span style="color: black; font-weight:600; font-size: 16px;">实验课</span>各周授课学时（必填）'+
+                            '<span id="delete-lab" style="float:right; font-size: 16px; color: #337ab7; cursor: pointer;">删除</span></h5>'+
+                       ' </div>'+
+                       '<div class="panel-body">'+
+                        	'<table class="weekhours-table">'+
+								'<tr id="lab-weekhours-title-row-1">'+
+								'</tr>'+
+								'<tr id="lab-weekhours-row-1">'+
+								'</tr>'+
+								'<tr id="lab-weekhours-title-row-2">'+
+								'</tr>'+
+								'<tr id="lab-weekhours-row-2">'+
+								'</tr>'+
+							'</table>'+
+                    	'</div>'+
+                    '</div>');
+			renderWeekHoursInside("lab-weekhours");
+			$('.hoursInputBlock').selectpicker('refresh');  
+        	$('.hoursInputBlock').selectpicker('render'); 
+			labflag = 1;
+		}
+
+		$("#delete-lab").click(function(){
+			$(".lab").remove();
+			labflag = 0;
+		});
+
+	});
+
+</script>
+
+<script type="text/javascript">
+	var $td_schedule = $('.schedule-table td:not([class="SatAndSun"])');
+	$td_schedule.mousedown(function(){
+		$this = $(this);
+		if($this.hasClass("n-prefer")){
+			$this.removeClass("n-prefer");
+			$this.children("span").hide();
+			$this.text("点击此处");
+			$("#schedule-nprefer-input").val($("#schedule-nprefer-input").val().replace("#"+$this.attr("id"),""));
+		}
+		else{
+			$this.addClass("n-prefer");
+			$this.text("");
+			$this.append('<span class="glyphicon glyphicon-remove">');
+			$("#schedule-nprefer-input").val($("#schedule-nprefer-input").val() + '#' + $this.attr("id"));
+		}
+	});
+
+	var $td_clsroom = $('.clsroom-table td');
+	$td_clsroom.mousedown(function(){
+		$this = $(this);
+		if($this.hasClass("n-prefer")){
+			$this.removeClass("n-prefer");
+			$this.children("span").hide();
+			$this.text("点击此处");
+			$("#clsroom-nprefer-input").val($("#clsroom-nprefer-input").val().replace("#"+$this.attr("id"),""));
+		}
+		else{
+			$this.addClass("n-prefer");
+			$this.text("");
+			$this.append('<span class="glyphicon glyphicon-remove">');
+			$("#clsroom-nprefer-input").val($("#clsroom-nprefer-input").val() + '#' + $this.attr("id"));
+		}
+	});
+
+</script>
+
+<script type="text/javascript">
+	$("#save-schedule").click(function(){
+		var thyHours = Number({{ course.thyHours }});
+		var labHours = Number({{ course.labHours }});
+		var thyTotalHourInput = 0;
+		var labtotalHourInput = 0;
+		var thyWeekHoursArray = [];
+		var labWeekHoursArray = [];
+		var unpreferTimeString = $("#schedule-nprefer-input").val();
+		var unpreferClsroomString = $("#clsroom-nprefer-input").val();
+		var unpreferTimeArray = [];
+		var unpreferClsroomArray = [];
+
+		for(var i=1; i<=16 ;i++){
+			thyTotalHourInput += Number($('#weekhours-input-td-'+ i + '').val());
+			thyWeekHoursArray[i-1] = Number($('#weekhours-input-td-'+ i + '').val());
+			if(labflag){
+				labtotalHourInput += Number($('#lab-weekhours-input-td-'+ i + '').val());
+				labWeekHoursArray[i-1] = Number($('#lab-weekhours-input-td-'+ i + '').val());
+			}
+		}
+
+		var tempSplitUnpreferTimeArray = unpreferTimeString.split('#');
+		for(var i = 0; i<tempSplitUnpreferTimeArray.length-1 ; i++ ){
+			unpreferTimeArray[i]=tempSplitUnpreferTimeArray[i+1].substring(3,6);
+		}
+
+		var tempSplitUnpreferClsroomArray = unpreferClsroomString.split('#');
+		for(var i = 0; i<tempSplitUnpreferClsroomArray.length-1 ; i++ ){
+			unpreferClsroomArray[i]=tempSplitUnpreferClsroomArray[i+1].substring(11,12);
+		}
+
+		//判断学时数是否相等
+		if(thyTotalHourInput != thyHours){
+			swal ({
+	            icon: "error",
+	            text: "理论课各周学时总和必须等于课程总学时"
+	        });
+	        return;
+		}
+		else{
+			if(labflag && (labtotalHourInput != labHours)){
+				swal ({
+		            icon: "error",
+		            text: "实验课各周学时总和必须等于课程总学时"
+		        });
+		        return;
+			}
+		}
+		$.ajax({
+            cache: false,
+            type: "POST",
+            traditional:true,
+            url:"",
+            data: {
+            	course_id: "{{ course.sid }}",
+            	course_class:"{{ course.courseClass }}",
+            	thyWeekHours: thyWeekHoursArray,
+       			labFlag: labflag,	//是否选择了实验（仅仅是为了后台方便调用，后台理应是知道课程是否有实验的）
+            	labWeekHours: labWeekHoursArray,
+            	unprefer_time: unpreferTimeArray,
+            	unprefer_building: unpreferClsroomArray,
+            	remarks: $("#remarks").val()
+            },
+            dateType:"json",
+            async: true,
+            success: function(data) {
+                if(data.status == 'success'){
+                    swal ({
+                        icon: "success",
+                        text: data.msg
+                    });
+                }else if(data.status == 'fail'){
+                    swal ({
+                        icon: "error",
+                        text: "保存失败请重试"
+                    });
+                }
+            },
+        });
+
+
+	});
+</script>
+
+<!-- <script type="text/javascript">
+	// 如果该教师已经保存过该课程的排课，则要初始化排课意向表
+	{% if course.arrange.flag %}//flag记录该课程是否保存过意向
+		//.time记录课程时间的意向(不中意的上课时间)
+		{% for time in course.arrange.time %}
+			$this = $('#td-'+ time.clstime + '-' + time.day + '');
+			$this.addClass("n-prefer");
+			$this.text("");
+			$this.append('<span class="glyphicon glyphicon-remove">');
+			$("#schedule-nprefer-input").val($("#schedule-nprefer-input").val() + '#' + $this.attr("id"));
+		{% endfor %}
+
+		//.place记录课程地点的意向
+		{% for place in course.arrange.place %}
+			$this = $('#clsroom-td-' + place + '');
+			$this.addClass("n-prefer");
+			$this.text("");
+			$this.append('<span class="glyphicon glyphicon-remove">');
+			$("#clsroom-nprefer-input").val($("#clsroom-nprefer-input").val() + '#' + $this.attr("id"));
+		{% endfor %}
+	{% endif %}
+</script> -->
+{% endblock %}

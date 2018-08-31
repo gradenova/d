@@ -1,0 +1,130 @@
+
+{% extends 'baseTea.html' %}
+
+{% block title %}教学项目进度验收{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+label{
+	margin-top: 5px;
+}
+
+.input-item{
+	display: block;
+	margin-top: 7px;
+    padding: 5px 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fly-panel">
+    <div class="schedule">
+        <h4>教改/教材/教研项目进度管理</h4>
+        <div class="divider-line"></div>
+        <div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">我的项目概况</h3>
+			</div>
+			<div class="panel-body">
+				<table class="table table-condensed">
+					<thead class="head">
+					  	<tr>
+							<th>项目ID</th>
+							<th>项目名称</th>
+							<th>项目类别</th>
+							<th>项目进度</th>
+							<th>查看详情</th>
+						</tr>
+					</thead>
+					<tbody>
+					  	<tr>
+							<td>{{ item.id }}</td>
+							<td>{{ item.title }}</td>
+							{% if item.category == "reform" %}
+	                        <td>教改</td>
+		                    {% elif item.category == "textbook" %}
+	                        <td>教材</td>
+		                    {% elif item.category == "research" %}
+	                        <td>教研</td>
+		                    {% else %}
+	                        <td>其他</td>
+		                    {% endif %}
+							<td>{{ item.process }}</td>
+							<td>
+								<a href="/teaching/readProjectDetail?itemID={{ item.id }}">详情</a>
+							</td>
+					  	</tr>
+					</tbody>
+			  	</table>
+			</div>
+			
+		</div>
+        <div class="divider-line"></div>
+        <div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">项目进度验收</h3>
+			</div>
+			<div class="panel-body">
+	            <table class="table table-bordered">
+		            <tbody>
+		                <tr>
+		                    <th width="150px">验收任务名称：</th>
+		                    <td>{{ processTask.title }}</td>
+		                </tr>
+		                <tr>
+		                    <th width="150px">验收任务说明：</th>
+		                    <td>{{ processTask.content }}</td>
+		                </tr>
+		                <tr>
+		                	<th>提交结果:</th>
+		                    <td>
+		                        <form id="submit-form" action="/teaching/updateProjectProcess/" method="POST" enctype="multipart/form-data">
+		                        	<input type="hidden" name="projectID" value="{{ item.id }}">
+                                    <input type="hidden" name="submit_type" value="{{ processTask.title }}">
+									<label for="file">上传文件：</label>
+									<input type="file" id="file" name="fileUpload" />
+									<br>
+									<a id="submit" class="btn btn-blue">提交</a>
+								</form>
+		                    </td>
+		                </tr>
+		            </tbody>
+	            </table>
+			</div>
+		</div>
+    </div>
+</div>
+    
+    
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	$("#submit").click(function(){
+			swal({
+            icon:"info",
+            text:"您确定要提交该项目进度吗？",
+            buttons: ["取消", "确定"],
+        }).then(function(isConfirm) {
+            if(isConfirm === true){
+                var form = document.getElementById("submit-form");  
+                //提交form表单  
+                form.submit(); 
+            }
+        });
+		});
+</script>
+{% endblock %}
+
+
+<!--
+说明：
+该页面为教师提交项目进度的页面
+中期检查/结题验收的提交都在这个页面完成
+其中{{ processTask.title }}是"中期检查"或"结题验收"，其具体的值是根据页面请求来源来判断
+即如果用户是点击“中期检查”进来的，那么就显示中期检查，反之则反
+
+用户将验收请求提交之后会刷新页面，并且此时页面顶部项目信息中的“项目进度”应该更新
+-->

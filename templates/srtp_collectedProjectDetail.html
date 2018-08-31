@@ -1,0 +1,34 @@
+
+{% extends 'baseAdm.html' %}
+
+{% block title %}征集项目详情{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.panel{
+    padding: 20px;
+}
+#title{
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+            <div class="fly-panel">
+                <div class="schedule">
+					<h4>消息内容</h4>
+					<div class="divider-line"></div>
+					<div class="panel panel-default">
+                        <div class="page-header">
+                            <h4 id="title">{{ collectedProject.title }}</h4>
+                        </div>
+						<p>{{ collectedProject.info }}</p>
+						<ul>
+                            <li><a href="/{{ collectedProject.fileUpload }}">{{ file_name}}</a></li>
+						</ul>
+                    </div>  
+                </div>
+            </div>
+{% endblock %}

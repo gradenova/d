@@ -1,0 +1,51 @@
+
+{% extends 'baseTea.html' %}
+
+{% block title %}课程列表{% endblock %}
+
+{% block style %}
+<link href="/static/css/dxStyle.css" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+<div class="fly-panel">
+	<div class="courseList">
+		<h4>课程列表</h4>
+		<div class="divider-line"></div>
+		<div class="title">
+			<i></i>
+			<h4>您本学期的课程如下（请点击课程进行排课）：</h4>
+		</div>
+
+		<div class="courseList-content-warpper">
+			{% if not courseList %}
+				<h4 style="text-align: center;color: #969696;">您本学期没有课程</h4>
+			{% else %}
+				{% for course in courseList %}
+				<div class="course-content-{{ course.sid }}">
+					<div class="dashed-line"></div>
+					<div class="course-title">
+						<!-- 课程 -->
+						<p class="course-name" style="font-size: 20px;"><a  href="/course/courseDemand?courseID={{ course.sid }}&courseClass={{ course.classes }}" >课程名称：{{ course.name }}</a></p>
+						<div class="course-detail">
+							<p>课程id：{{ course.sid }}</p>
+							<p>上课班级：{{ course.classes }}</p>
+							<p>总学时：{{ course.totalHours }}</p>
+                            <p>是否具有实验课：{{ course.labFlag }}</p>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+				<div class="dashed-line"></div><!-- 结尾虚线 -->
+			{% endif %}
+		</div>
+	</div>
+	
+</div>
+
+{% endblock %}
+			
+
+{% block js %}
+
+{% endblock %}

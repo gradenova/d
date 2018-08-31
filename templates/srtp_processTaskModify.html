@@ -1,0 +1,167 @@
+
+{% extends 'baseAdm.html' %}
+
+{% block title %}srtp进度任务修改{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.th{
+    width: 20%;
+    background-color: rgb(196, 196, 230);
+}
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+.tabcontent {
+    display: none;
+    padding: 12px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fly-panel">
+    <div class="schedule">
+		<h4>修改任务</h4>
+        <div class="divider-line"></div>   
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">要修改的内容</h3>
+            </div>
+            <div class="panel-body">
+				<form>
+					<table class="table table-bordered">
+					<tbody>
+						<tr>
+							<th class="th">标题:</th>
+							<td id="content_title" class="td">{{ item.title }}</td>
+						</tr>
+						<tr>
+							<th class="th">截止时间:</th>
+							<td id="content_date" class="td">{{ item.deadline|date:"Y-m-d" }}</td>
+						</tr>
+						<tr>
+							<th class="th">内容:</th>
+							<td id="content_content" class="td">{{ item.content }}</td>
+						</tr>
+					</tbody>
+					</table>
+				</form>
+
+				<a id="submit" class="btn btn-blue">修改完成并提交</a>
+            </div>
+        </div>
+        <div class="btn-group tab">
+            <button type="button" class="btn btn-default tablinks" onclick="openModify(event, 'title')">标题</button>
+            <button type="button" class="btn btn-default tablinks" onclick="openModify(event, 'date')">时间</button>
+            <button type="button" class="btn btn-default tablinks" onclick="openModify(event, 'content')">内容</button>
+        </div>
+		<div id="title" class="tabcontent">
+			<label for="name">标题</label>
+			<input id="modify_title" type="text" class="form-control" placeholder="请输入任务标题">
+			<br>
+			<button class="btn btn-blue" onclick="Modify1()">覆盖</button>
+		</div>
+
+		  <div id="date" class="tabcontent">
+			<label for="name">截止时间</label>
+			<input id="modify_date" type="date" class="form-control" placeholder="请设置截止时间">
+			<br>
+			<button class="btn btn-blue" onclick="Modify2()">覆盖</button>
+		  </div>
+
+		  <div id="content" class="tabcontent">
+			<label for="name">任务内容</label>
+			<textarea id="modify_content" class="form-control" rows="3" style="resize: none;"></textarea>
+			<br>
+			<button class="btn btn-blue" onclick="Modify3()">覆盖</button>
+		  </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	$(function(){
+		$("#modify_title").val("{{ item.title }}");
+		$("#modify_date").val("{{ item.deadline|date:'Y-m-d' }}");
+		$("#modify_content").val("{{ item.content }}");
+	});
+
+	$("#submit").click(function(){
+		swal({
+            icon:"info",
+            text:"您确定要修改该任务吗？",
+            buttons: ["取消", "确定"],
+        }).then(function(isConfirm) {
+            if(isConfirm === true){
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url:"/srtp/changeProcessTask/",
+                    data: {
+                        itemID:"{{ item.id }}",
+                    	title:$("#content_title").text(),
+                    	deadline:$("#content_date").text(),
+                    	content:$("#content_content").text()
+                    },
+                    dateType:"json",
+                    async: true,
+                    success: function(data) {
+                        if(data.status == 'success'){
+                            swal({
+						        icon: "success",
+						        text: "操作成功",
+						    }).then(function(isconfirm){
+						    	window.location.reload();
+						    });
+                        }else if(data.status == 'fail'){
+                            swal ({
+                                icon: "error",
+                                text: "操作失败，请重试",
+                            });
+                        }
+                    }
+                });
+            }
+        });
+	});
+
+</script>
+<script>
+	function openModify(evt, modifyName) {
+		var i, tabcontent, tablinks;
+		tabcontent = document.getElementsByClassName("tabcontent");
+		for (i = 0; i < tabcontent.length; i++) {
+			tabcontent[i].style.display = "none";
+		}
+		tablinks = document.getElementsByClassName("tablinks");
+		for (i = 0; i < tablinks.length; i++) {
+			tablinks[i].className = tablinks[i].className.replace(" active", "");
+		}
+		document.getElementById(modifyName).style.display = "block";
+		evt.currentTarget.className += " active";
+	}
+	function Modify1(){
+		var modify;
+		modify = $("#modify_title").val();
+		document.getElementById("content_title").innerText=modify;
+		
+	}
+	function Modify2(){
+		var modify;
+		modify=$("#modify_date").val();
+		document.getElementById("content_date").innerText=modify;
+		
+	}
+	function Modify3(){
+		var modify;
+		modify = $("#modify_content").val();
+		document.getElementById("content_content").innerText=modify;
+		
+	}
+</script>
+{% endblock %}

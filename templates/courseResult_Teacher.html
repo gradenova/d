@@ -1,0 +1,70 @@
+
+{% extends 'baseTea.html' %}
+
+{% block title %}排课结果{% endblock %}
+
+{% block style %}
+<link href="/static/css/dxStyle.css" rel="stylesheet" type="text/css">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="fly-panel">
+	<div class="schedule">
+		<h4>排课结果</h4>
+		<div class="divider-line"></div>
+		
+        <div class="schedule-table-wraper">
+			<table class="schedule-table">
+				<tr>
+					<th></th>
+					<th>星期一</th>
+					<th>星期二</th>
+					<th>星期三</th>
+					<th>星期四</th>
+					<th>星期五</th>
+					<th>星期六</th>
+					<th>星期日</th>
+				</tr>
+				{% for row in courseSchedule %}
+				<tr id="row-{{forloop.counter}}">
+					<th>
+						{% if forloop.counter == 1 %}
+						上午(一)<br/>8:00-9:35
+						{% elif forloop.counter == 2 %}
+						上午(二)<br/>9:55-11:30
+						{% elif forloop.counter == 3 %}
+						中午(一)<br/>13:30-15:05
+						{% elif forloop.counter == 4 %}
+						下午(一)<br/>15:20-16:55
+						{% elif forloop.counter == 5 %}
+						下午(二)<br/>17:10-18:45
+						{% elif forloop.counter == 6 %}
+						晚上(一)<br/>19:30-21:05
+						{% else %}
+						{% endif %}
+					</th>
+
+					{% for cell in row %}
+					<td>{{ cell }}</td>
+					{% endfor %}
+					
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+
+		<div class="divider-line"></div>
+
+		<div class="schedule-intro">
+			<p>排课说明：<br/>1、以上是排课系统暂定的课表，若有异议请前往办公楼寻找相关人员资讯。<br/>
+			</p>
+		</div>
+		<div class="divider-line"></div>
+	</div>
+</div>
+{% endblock %}
+
+{% block js %}
+{% endblock %}

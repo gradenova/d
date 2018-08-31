@@ -1,0 +1,287 @@
+
+{% extends 'baseAdm.html' %}
+
+{% block title %}教学项目审核列表{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+#count{
+	color: brown;
+}
+.head{
+	background-color: rgb(149, 196, 236);
+}
+.search-target1{
+margin-bottom: 10px;
+width: 30%;
+float: left;
+}
+
+.search-target2{
+margin-bottom: 10px;
+width: 30%;
+float: left;
+}
+
+.pagination-option{
+    float:right;
+}
+
+.pagination-pag li {
+    list-style-type:none;
+    float: left;
+    margin-left: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+            <div class="fly-panel">
+                <div class="schedule search-test-inner">
+                    <h4>待审列表</h4>
+                    <div class="divider-line"></div>
+
+                    <input type="text" class="form-control search-target1" placeholder="搜索">
+
+			        <div class="pagination-option">
+			            <ul class="pagination-pag">
+			                <li><span v-text = "presentPage1+' of '+AmountPages1"></span></li>
+			                <li>
+			                    <a class="btn btn-default btn-sm" v-on:click="clickPageLeft1"><i class="glyphicon glyphicon-chevron-left  pag-left"></i></a>
+			                </li>
+			                <li>
+			                    <a class="btn btn-default btn-sm" v-on:click="clickPageRight1"><i class="glyphicon glyphicon-chevron-right pag-right"></i></a>
+			                </li>
+			            </ul>
+			        </div>
+
+                    <table class="table table-bordered">
+						<thead class="head">
+						  <tr>
+						  	<th>项目ID</th>
+							<th>项目名称</th>
+							<th>项目类型</th>
+							<th>审核</th>
+						  </tr>
+						</thead>
+						<tbody class="search-item-list1">
+							{% for verifyItem in verifyItems %}
+							<tr class="list-item search-item-id1" id='ListItem1_{{ verifyItem.id }}' date-page="1">
+								<input type="hidden" class="forSearch search-value1" name="forSearch">
+								<td>{{ verifyItem.id }}</td>
+								<td>{{ verifyItem.title }}</td>
+								<td>
+									{% if verifyItem.category == "reform" %}
+				                    	教改
+				                    {% elif verifyItem.category == "textbook" %}
+				                    	教材
+				                    {% elif verifyItem.category == "research" %}
+				                    	教研
+				                    {% else %}
+				                    	其他
+				                    {% endif %}
+								</td>
+								<td>
+									<a href="/teaching/verifyItemAdm?itemID={{ verifyItem.id }}">审核</a>
+								</td>
+							</tr>
+							{% endfor %}
+
+						</tbody>
+					  </table>            
+				  	<p>共<span id="count">{{ verifyItems|length }}</span>条记录</p>       
+                    <div class="divider-line"></div>
+					<h4>已审项目</h4>
+                    <div class="divider-line"></div>
+
+                    <input type="text" class="form-control search-target2" placeholder="搜索">
+
+			        <div class="pagination-option">
+			            <ul class="pagination-pag">
+			                <li><span v-text = "presentPage2+' of '+AmountPages2"></span></li>
+			                <li>
+			                    <a class="btn btn-default btn-sm" v-on:click="clickPageLeft2"><i class="glyphicon glyphicon-chevron-left  pag-left"></i></a>
+			                </li>
+			                <li>
+			                    <a class="btn btn-default btn-sm" v-on:click="clickPageRight2"><i class="glyphicon glyphicon-chevron-right pag-right"></i></a>
+			                </li>
+			            </ul>
+			        </div>
+
+                    <table class="table table-bordered">
+						<thead class="head">
+						  <tr>
+						  	<th>项目ID</th>
+							<th>项目名称</th>
+							<th>审核时间</th>
+							<th>审核结果</th>
+						  </tr>
+						</thead>
+						<tbody class="search-item-list2">
+							{% for verifiedItem in verifiedItems %}
+						  <tr class="list-item search-item-id2" id='ListItem2_{{ verifiedItem.id }}' date-page="1">
+						  	<input type="hidden" class="forSearch search-value2" name="forSearch">
+						  	<td>{{ verifiedItem.id }}</td>
+							<td>
+								<a href="/{{ verifiedItem.extra_file}}">{{ verifiedItem.title }}</a>
+							</td>
+							<td>{{ verifiedItem.apply_verify_time|date:"Y-m-d" }}</td>
+							<td>{{ verifiedItem.apply_status }}</td>
+						  </tr>
+							{% endfor %}
+						</tbody>
+					  </table>            
+					  <p>共<span id="count">{{ verifiedItems|length }}</span>条记录</p>
+                    <div class="divider-line"></div>      
+                </div>
+            </div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    var vm_pagination = new Vue({
+        el: '.search-test-inner',
+        data: {
+            AmountofItem1: 0,//总共的条目数
+            AmountifItemPrepage1: 5,//列表每页的条目数
+            presentPage1: 1,
+            AmountofItem2: 0,//总共的条目数
+            AmountifItemPrepage2: 5,//列表每页的条目数
+            presentPage2: 1
+        },
+        computed:{
+            AmountPages1:function(){
+                return Math.ceil(this.AmountofItem1/this.AmountifItemPrepage1);
+            },
+            AmountPages2:function(){
+                return Math.ceil(this.AmountofItem2/this.AmountifItemPrepage2);
+            }
+        },
+        methods:{
+            initial:function(){
+
+                {% for verifyItem in verifyItems %}
+
+                this.AmountofItem1++;
+
+                $("#ListItem1_{{ verifyItem.id }}").attr("date-page",Math.ceil(this.AmountofItem1/this.AmountifItemPrepage1).toString());
+                
+
+                {% endfor %}
+
+                $('.search-item-list1 > [date-page!='+this.presentPage1+']').hide();
+
+
+                {% for verifiedItem in verifiedItems %}
+
+                this.AmountofItem2++;
+
+                $("#ListItem2_{{ verifiedItem.id }}").attr("date-page",Math.ceil(this.AmountofItem2/this.AmountifItemPrepage2).toString());
+                
+
+                {% endfor %}
+
+                $('.search-item-list2 > [date-page!='+this.presentPage2+']').hide();
+            },
+
+            clickPageLeft1:function(){
+                if(this.presentPage1>1){
+                    this.presentPage1--;
+                }
+                $('.search-item-list1 > [date-page!='+this.presentPage1+']').hide();
+                $('.search-item-list1 > [date-page='+this.presentPage1+']').show();
+            },
+
+            clickPageRight1:function(){
+                 if(this.presentPage1<Math.ceil(this.AmountofItem1/this.AmountifItemPrepage1)){
+                    this.presentPage1++;
+                 }
+                $('.search-item-list1 > [date-page!='+this.presentPage1+']').hide();
+                $('.search-item-list1 > [date-page='+this.presentPage1+']').show();
+            },
+
+         	clickPageLeft2:function(){
+                if(this.presentPage2>1){
+                    this.presentPage2--;
+                }
+                $('.search-item-list2 > [date-page!='+this.presentPage2+']').hide();
+                $('.search-item-list2 > [date-page='+this.presentPage2+']').show();
+            },
+
+            clickPageRight2:function(){
+                 if(this.presentPage2<Math.ceil(this.AmountofItem2/this.AmountifItemPrepage2)){
+                    this.presentPage2++;
+                 }
+                $('.search-item-list2 > [date-page!='+this.presentPage2+']').hide();
+                $('.search-item-list2 > [date-page='+this.presentPage2+']').show();
+            }
+
+
+        }
+    });
+
+    vm_pagination.initial();
+</script>
+
+<script src="/static/js/jQuery.Hz2Py-min.js"></script>
+<script src="/static/js/jsSearch.js"></script>
+
+<script type="text/javascript">
+    //整合一个项目中所有搜索的信息
+
+    var searchDomArray1 = $(".search-value1").parent();
+
+    var searchInputArray1 = $(".search-value1");
+
+    for(var i=0;i<this.searchDomArray1.length;i++){
+
+        var singleValueDomArray1 = $(searchDomArray1[i]).find('td');
+
+        var allSearchValue1 = '';
+
+        for(var j=0;j<this.singleValueDomArray1.length;j++){
+            allSearchValue1 += $(singleValueDomArray1[j]).text();
+        }
+
+        $(searchInputArray1[i]).val(allSearchValue1);
+    }
+
+    
+    //前端JS实现搜索
+    $(function(){
+        new SEARCH_ENGINE1("search-test-inner","search-target1","search-item-list1","search-value1","search-item-id1","presentPage1");
+    });
+
+
+    //整合一个项目中所有搜索的信息
+
+    var searchDomArray2 = $(".search-value2").parent();
+
+    var searchInputArray2 = $(".search-value2");
+
+    for(var i=0;i<this.searchDomArray2.length;i++){
+
+        var singleValueDomArray2 = $(searchDomArray2[i]).find('td');
+
+        var allSearchValue2 = '';
+
+        for(var j=0;j<this.singleValueDomArray2.length;j++){
+            allSearchValue2 += $(singleValueDomArray2[j]).text();
+        }
+
+        $(searchInputArray2[i]).val(allSearchValue2);
+    }
+
+    
+    //前端JS实现搜索
+    $(function(){
+        new SEARCH_ENGINE2("search-test-inner","search-target2","search-item-list2","search-value2","search-item-id2","presentPage2");
+    });
+</script>
+{% endblock %}
+                    
+                    
+		

@@ -1,0 +1,444 @@
+/***************************************
+文件名：段旭个人样式
+作者：段旭
+=========================================
+说明：
+本css包含段旭负责内容的相关样式
+其余人不得修改
+********************************************/
+
+body {
+    font:normal 100%/1.4 "Open Sans","Microsoft YaHei","微软雅黑","Hiragino Sans GB",Tahoma,Lucida,Verdana,STHeiti,SimSun,'宋体',sans-serif;
+    color:#424242;
+    background:#f0f1f1;
+    overflow-x:hidden;
+    position: relative;
+    font-size:15px;
+    font-weight: 400;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+
+a{
+    text-decoration: none!important;
+    outline: none!important;
+}
+
+a:hover, a:foucs ,a:active{
+    text-decoration: none!important;
+    outline: none!important;
+}
+
+.fly-panel {
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+}
+
+.btn-blue{
+    color: #fff;
+    background-color: #3d79e5;
+    border: none;
+    outline: none;
+    padding: 6px 20px;
+}
+
+.btn-blue:hover, .btn-blue:focus{
+    color: #fff;
+    background-color: #6898ee;
+    border: none;
+    outline: none;
+}
+
+
+
+.topbar {
+    width:100%;
+    min-height:30px;
+    left:0;
+    top:0;
+    z-index:500;
+    padding:0 0 0 0;
+	margin:0 0 0 0;
+    background:#3d79e5;
+    box-shadow:0 0 10px 0 rgba(0,0,0,.3);
+}
+
+.topbar .logo{
+    margin-bottom: 20px;
+
+}
+
+.centralbar {
+	width: 1000px;
+	margin: 0 auto;
+    padding-top:20px; 
+}
+
+.top-nav {
+	background-color: #2d57a8;
+	height: 30px;
+	box-shadow:0 0 10px 0 rgba(0,0,0,.3);
+	margin-top:20px;
+    padding: 5px 0;
+}
+
+
+/*nav导航盒子*/
+.nav{
+    border-radius: 6px 6px 0px 0px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+    /*导航位置*/
+    margin: 0px auto;
+    text-align: center;
+    position: relative;
+    background: #095090;
+}
+/*nav-main*/
+.nav-main{
+    padding: 0 20px;
+    width: 100%;
+    height: 100%;
+    list-style-type: none;
+}
+.nav-main span{
+    display: inline-block;
+    margin-left: 10px;
+    width: 7px;
+    height: 7px;
+    background: url('../img/down-icon.png') no-repeat;
+}
+/*图标向上旋转*/
+.hover-up{
+    transition-duration: .5s;
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+}
+/*图标向下旋转*/
+.hover-down{
+    transition-duration: .5s;
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+}
+/*导航条设置*/
+.nav-main>li{
+    padding: 0 20px;
+    height: 100%;
+    display: block;
+    float: left;
+    background: #095090;
+    color: #fff;
+    margin-right: 1px;
+    cursor: pointer;
+    position: relative;
+}
+.nav-main>li:hover{
+    background: #236caf;
+}
+/*隐藏盒子设置*/
+.hidden-box{
+    width: 100%;
+    left: 0px;
+    border: 1px solid #2b65cb;
+    border-top: 0;
+    position: absolute;
+    display: none;
+    top: 30px;
+    background-color: white;
+    z-index: 500;
+}
+.hidden-box>ul{
+    padding: 0;
+    list-style-type: none;
+    color: #2b65cb;
+    cursor: pointer;
+}
+.hidden-box li{
+    width: 100%;
+}
+.hidden-box li:hover{
+    background: #2b65cb;
+    color: #fff;
+}
+
+.hidden-box li:hover{
+    background: #2b65cb;
+    color: #fff;
+}
+
+.nav-main .funcbtn{
+    float: right;
+}
+
+.nav-main>li>a{
+    color: #fff;
+}
+
+.clearDiv {   
+clear: both;   
+}   
+
+.login img{ border:none;}
+.login_box{ margin:120px auto 0;}
+.login_box .login_l_img{ float:left; width:432px; height:440px; margin-left:50px;}
+.login_box .login_l_img img{width:500px; height:440px; }
+.login { box-shadow: 0 0 10px 0 rgba(0,0,0,.3);margin: 0 auto;height:auto; width:400px; padding:50px; background-color: #ffffff;border-radius:6px;box-sizing: border-box; position:relative;}
+.login_logo{ box-shadow: 0 0 10px 0 rgba(0,0,0,.3);width:120px; height:120px; border:5px solid #93defe;border-radius:100px; background:#fff; text-align:center; line-height:110px; position:absolute; top:-60px; right:140px;}
+.login_name{ width:100%; text-align:center; margin-top:20px;}
+.login_name p{ width:100%; text-align:center; font-size:18px; color:#444; padding:10px 0 10px;margin: 0}
+.login_logo img{ width:60px; height:60px;display: inline-block; vertical-align: middle;}
+
+.login input[type=text],
+.login input[type=file],
+.login input[type=password],
+.login input[type=email],
+.login select 
+{ border: 1px solid #DCDEE0; vertical-align: middle; border-radius: 3px; height: 50px; padding: 0px 16px; font-size: 14px; color: #555555; outline:none; width:100%;margin-bottom: 15px;line-height:50px; color:black;}
+
+.login input[type=text]:focus,
+.login input[type=file]:focus,
+.login input[type=password]:focus,
+.login input[type=email]:focus,
+.login select:focus 
+{ border: 1px solid #27A9E3; }
+
+.login input[type=submit],
+.login input[type=button] 
+{ display: inline-block; vertical-align: middle; padding: 12px 24px; margin: 0px; font-size:16px; line-height: 24px; text-align: center; white-space: nowrap; vertical-align: middle; cursor: pointer; color: #ffffff; background-color: #27A9E3; border-radius: 3px; border: none; -webkit-appearance: none; outline:none; width:100%; }
+
+
+.login-warning-box{
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.login-warning{
+    color: #ef2c2c;
+    text-align: left;
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+.login-warning-box #goToActivatePage{
+    text-align: right;
+    color: black;
+    right: 0px;
+    position: absolute;
+    font-size: 10px;
+}
+
+.paper-wrapper:after {   
+content:"";   
+display: block;   
+clear: both;   
+}  
+
+.page-content{
+    width: 1000px;
+    margin: 20px auto;
+}
+
+.page-content:after {   
+content:"";   
+display: block;   
+clear: both;   
+}  
+
+/*排课页面*/
+.schedule{
+    position: relative;
+    padding: 30px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+.schedule table{
+    width: 100%;
+    margin: 0 auto;
+    border: 2px solid #8a7e7e;
+    border-collapse: initial;
+    padding: 5px;
+}
+
+.schedule tr{
+    height: auto;
+    width: auto;
+    text-align: center;
+}
+.schedule th{
+    height: 50px;
+    width: 100px;
+    border: 1px solid #d4d4d4;
+    text-align: center;
+}
+.schedule td{
+    height: 100px;
+    width: 100px;
+    border: 1px solid #d4d4d4;
+    text-align: center;
+    color: #cdcbcb;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.schedule .SatAndSun{
+    background-color: #eeeeee;
+    cursor: initial;
+}
+
+.schedule-table:after {   
+    content:"";   
+    display: block;   
+    clear: both;   
+}  
+
+.schedule span{
+    font-size: 25px;
+    color: white;
+}
+
+.schedule .prefer{
+    background-color: #7dcd7d;
+    border-radius: 6px 6px 6px 6px;
+}
+
+.schedule .n-prefer{
+    background-color: #e68989;
+    border-radius: 6px 6px 6px 6px;
+}
+
+.schedule .intro{
+    font-size: 20px;
+    text-align: center; 
+}
+
+.divider-line {
+    border-bottom: 2px solid #3d79e5;
+    margin-top: 14px;
+    margin-bottom: 16px;
+}
+
+.schedule h4 {
+    font-size: 20px;
+}
+
+.schedule-table-wraper{
+    padding: 0 0px;
+}
+
+.schedule-intro{
+    padding: 0 20px;
+}
+
+.schedule .remarks{
+    position: relative;
+    margin-top: 15px;
+}
+.schedule .remarks>p{
+    position: absolute;
+    left: 0;
+    top: 15px;
+}
+
+.schedule .remarks input{
+    border: 1px solid #adadad;
+    vertical-align: middle;
+    border-radius: 3px;
+    height: 40px;
+    padding: 0px 16px;
+    font-size: 14px;
+    color: #555555;
+    outline: none;
+    width: 100%;
+    line-height: 50px;
+    color: black;
+}
+
+.schedule .remark-input{
+    padding: 7px 0px 7px 100px;
+}
+
+.weekhours-table input{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: black;
+    font-size: 16px;
+    border: none;
+}
+
+.weekhours-table td{
+    height: 50px;
+}
+
+/*课程列表页*/
+.courseList{
+    position: relative;
+    padding: 30px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+.courseList .title i{
+    font-size: 18px;
+    color: #2e3639;
+    height: 43px;
+    width: 43px;
+    background: url(../img/rqIcon1.png) no-repeat left center;
+    padding-left: 49px;
+    line-height: 43px;
+    display: inline-block;
+}
+
+.courseList .title h4{
+    display: inline-block;
+    position: absolute;
+}
+
+.courseList .courseList-content-warpper{
+    margin-left: 19px;
+    border-left: solid 1px #d6dbdb;
+    height: 95%;
+    padding: 10px;
+}
+
+.courseList .dashed-line{
+    border-top: #9ba4b3 2px dashed;
+    overflow: hidden;
+    height: 1px;
+    padding: 0px 10px;
+    margin: 15px 0px;
+}
+
+.courseList .course-title{
+    padding: 0px 20px 0px 20px;
+}
+
+.courseList .course-name a:hover{
+    text-decoration: underline!important;
+    outline: initial!important;
+    cursor: pointer;
+}
+
+.courseList .course-detail{
+    border-left: solid 10px #d6dbdb;
+    background-color: #f2f2f2;
+}
+
+.courseList .course-detail p{
+    margin-left: 10px;
+    
+}
+
+/*排课结果页面*/
+.schedule-result td{
+    cursor: initial!important;
+}
+
+
+
+

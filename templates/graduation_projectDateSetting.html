@@ -1,0 +1,186 @@
+<!-- 
+说明：
+该页面为供“管理员”对查看的学生列表（项目列表）
+管理员点击导航栏中的“毕业设计”会进入此页面
+
+假设学生和毕设项目是一对一的关系，虽然页面显示是学生列表，但是后端渲染的时候可以当成项目列表去渲染
+
+说明编辑人：段旭（设计这个页面的是小明，不关我事orz...）
+-->
+{% extends 'baseAdm.html' %}
+
+{% block title %}学生毕设列表{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+
+<style type="text/css">
+.unshow{
+	display: none;
+}
+.show{
+	display: block;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fly-panel">
+	<div class="schedule">
+		<h4>日期设置</h4>
+		<div class="divider-line"></div>
+		<div class="row">
+		  <div class="col-xs-2">
+			<div class="btn-group-vertical">
+			<button type="button" class="btn btn-primary" onclick="myFun0();">选题报告</button>
+			<button type="button" class="btn btn-primary" onclick="myFun1();">任务报告</button>
+			<button type="button" class="btn btn-primary" onclick="myFun2();">中期报告</button>
+			<button type="button" class="btn btn-primary" onclick="myFun3();">毕业设计</button>
+		</div>
+		  </div>
+		  <div class="col-xs-10">
+			<div id="Select" class="unshow">
+				<div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">选题报告</h5>
+				</div>
+				<div class="panel-body">
+					<p>开始时间：{{ graduationtime.DeclareBeginTime|date:"Y-m-d" }}</p>
+					<p>结束时间：{{ graduationtime.DeclareEndTime|date:"Y-m-d" }}</p>
+					<form>
+						<p>>>设置开始日期</p>
+						<input type="date" class="form-control" name="startDate" placeholder="输入开始时间">
+						<p>>>设置截止日期</p>
+						<input type="date" class="form-control" name="finishDate" placeholder="输入截止时间">
+						<br>
+						<a id="graduateDate-select-input" class="btn btn-primary submit">确定</a>
+					</form>
+				</div>
+			</div>
+			</div>
+			<div id="Mission" class="unshow">
+				<div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">任务报告</h5>
+				</div>
+				<div class="panel-body">
+					<p>开始时间：{{ graduationtime.TaskBeginTime|date:"Y-m-d" }}</p>
+					<p>结束时间：{{ graduationtime.TaskEndTime|date:"Y-m-d" }}</p>
+					<form>
+						<p>>>设置开始日期</p>
+						<input type="date" class="form-control" name="startDate" placeholder="输入开始时间">
+						<p>>>设置截止日期</p>
+						<input type="date" class="form-control" name="finishDate" placeholder="输入截止时间">
+						<br>
+						<a id="graduateDate-mission-input" class="btn btn-primary submit">确定</a>
+					</form>
+				</div>
+			</div>
+			</div>
+			<div id="Mid" class="unshow">
+				<div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">中期报告</h5>
+				</div>
+				<div class="panel-body">
+					<p>开始时间：{{ graduationtime.MidtermBeginTime|date:"Y-m-d" }}</p>
+					<p>结束时间：{{ graduationtime.MidtermEndTime|date:"Y-m-d" }}</p>
+					<form>
+						<p>>>设置开始日期</p>
+						<input type="date" class="form-control" name="startDate" placeholder="输入开始时间">
+						<p>>>设置截止日期</p>
+						<input type="date" class="form-control" name="finishDate" placeholder="输入截止时间">
+						<br>
+						<a id="graduateDate-mid-input" class="btn btn-primary submit">确定</a>
+					</form>
+				</div>
+			</div>
+			</div>
+			<div id="Graduate" class="unshow">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">结题报告</h5>
+				</div>
+				<div class="panel-body">
+					<p>开始时间：{{ graduationtime.GraduationBeginTime|date:"Y-m-d" }}</p>
+					<p>结束时间：{{ graduationtime.GraduationEndTime|date:"Y-m-d" }}</p>
+					<form>
+						<p>>>设置开始日期</p>
+						<input type="date" class="form-control" name="startDate" placeholder="输入开始时间">
+						<p>>>设置截止日期</p>
+						<input type="date" class="form-control" name="finishDate" placeholder="输入截止时间">
+						<br>
+						<a id="graduateDate-graduation-input" class="btn btn-primary submit">确定</a>
+					</form>
+				</div>
+			</div>
+			</div>
+
+		  </div>
+	   </div>
+
+
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+	var tabcontent0, tabcontent1,tabcontent2,tabcontent3;
+	tabcontent0 = document.getElementById("Select");
+	tabcontent1 = document.getElementById("Mission");
+	tabcontent2 = document.getElementById("Mid");
+	tabcontent3 = document.getElementById("Graduate");
+	myFun0 = function(){
+		if(tabcontent0.className=="show")tabcontent0.className="unshow";
+		else tabcontent0.className="show";
+	}
+	myFun1 = function(){
+		if(tabcontent1.className=="show")tabcontent1.className="unshow";
+		else tabcontent1.className="show";
+	}
+	myFun2 = function(){
+		if(tabcontent2.className=="show")tabcontent2.className="unshow";
+		else tabcontent2.className="show";
+	}
+	myFun3 = function(){
+		if(tabcontent3.className=="show")tabcontent3.className="unshow";
+		else tabcontent3.className="show";
+	}
+
+	$('.submit').click(function(){
+		$this = $(this);
+		$this_type = $this.attr('id').split('-')[1];
+		$this_data = $this.parent();
+		$.ajax({
+			cache:true,//保留缓存数据
+			type:"POST",//为post请求
+			url:"",
+			data:{
+                	type: $this_type,
+                	submitData: $this_data.serialize()
+                },
+			async:false,
+
+			success:function(data){
+				if(data.status == 'success'){
+					swal ({
+						icon: "success",
+						text: "操作成功",
+					}).then(function(isConfirm){
+					    	window.location.reload();
+					    });
+				}else if(data.status == 'fail'){
+					swal ({
+						icon: "error",
+						text: data.msg,
+					}).then(function(isConfirm){
+					    	window.location.reload();
+					    });
+				}
+			}
+		});
+	});
+</script>
+{% endblock %}

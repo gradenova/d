@@ -1,0 +1,340 @@
+{% extends 'baseStu.html' %}
+
+{% block title %}毕设项目信息{% endblock %}
+
+{% block style %}
+<!--
+说明：
+该页面为供“学生”对自己毕业设计进行管理的项目详情（审批）页面
+在学生点击导航栏中的“毕业设计”会进入此页面
+
+在本页面中：
+	1）{{ project.feedback.xxx }}变量是教师为每个报告写的反馈，没有则传暂无
+	2）在提交审核的form中有一个字段是itemIdentity，其是为了说明提交的是什么报告的反馈（selectReport/taskReport/midReport/gradutionDesign）
+
+说明编辑人：段旭（设计这个页面的是小明，不关我事orz...）
+-->
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style>
+	p{
+		margin: 0!important;
+	}
+
+    .table>tbody>tr>th{
+    background-color: #6898ee;
+	}
+	.unShow{
+		display: none;
+	}
+	.show{
+		display: block;
+	}
+
+	.modifyBtn{
+		cursor: pointer;
+	}
+
+	.item-input{
+		display: none;
+		width: 100%;
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+			<div class="fly-panel">
+				<div class="schedule">
+					<h4>毕业设计</h4>
+					<div class="divider-line"></div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h5 class="panel-title">我的毕业设计</h5>
+						</div>
+						<div class="panel-body">
+							<table class="table table-bordered">
+								<thead>
+									<th width="100px"></th>
+									<th colspan="3" width="auto">我的毕设</th>
+									<th width="70px">操作</th>
+								</thead>
+								<tbody>
+									<tr>
+	                                    <th>毕设题目：</th>
+										<td colspan="3">
+											<p class="item-show">{{ project.title }}</p> 
+											<input class="item-input form-control" id="graduateDesign-title-input" type="text" name="title">
+										</td>
+										{% if not project.DeclareShow %}
+										<td></td>
+										{% else %}
+	                                    <td><a class="modifyBtn inlineModifyBtn">修改</a></td>
+										{% endif %}
+									</tr>
+									<tr>
+	                                    <th>指导老师：</th>
+										<td width="300px">
+											<p class="item-show">{{ project.teacherID }}</p>
+											<input class="item-input form-control" id="graduateDesign-myteacher-input" type="text" name="title">
+										</td>
+										<th width="130px">指导老师姓名：</th>
+										<td>{{ project.teacherName }}</td>
+										{% if not project.DeclareShow %}
+										<td></td>
+										{% else %}
+	                                    <td><a class="modifyBtn inlineModifyBtn">修改</a></td>
+										{% endif %}
+									</tr>
+                                    <tr>
+	                                    <th>评审老师：</th>
+										<td width="300px">
+											<p class="item-show">{{ project.assesserID }}</p>
+											<input class="item-input form-control" id="graduateDesign-otherteacher-input" type="text" name="title">
+										</td>
+										<th width="130px">评审老师姓名：</th>
+										<td>{{ project.assesserName }}</td>
+										{% if not project.DeclareShow %}
+										<td></td>
+										{% else %}
+	                                    <td><a class="modifyBtn inlineModifyBtn">修改</a></td>
+										{% endif %}
+									</tr>
+									<tr id="selectReport">
+										<th>选题报告:</th>
+										<td colspan="3">
+											<a href="/graduation/download/{{ project.SelectionReport }}" title="点击下载">{{ project.SelectionName }}</a>
+										</td>
+										{% if not project.DeclareShow %}
+										<td></td>
+										{% else %}
+										<td><a class="modifyBtn" onclick="myFun0()">修改</a></td>
+										{% endif %}
+									</tr>
+									<tr id="TaskReport">
+										<th>任务报告:</th>
+										<td colspan="3">
+											<a href="/graduation/download/{{ project.TaskReport }}" title="点击下载">{{ project.TaskName }}</a>
+										</td>
+										{% if not project.TaskShow %}
+										<td></td>
+										{% else %}
+										<td><a class="modifyBtn" onclick="myFun1()">修改</a></td>
+										{% endif %}
+									</tr>
+									<tr id="midReport">
+										<th>中期报告:</th>
+										<td colspan="3">
+											<a href="/graduation/download/{{ project.MidtermReport }}" title="点击下载">{{ project.MidtermName }}</a>
+										</td>
+										{% if not project.TaskShow %}
+										<td></td>
+										{% else %}
+										<td><a class="modifyBtn" onclick="myFun2()">修改</a></td>
+										{% endif %}
+									</tr>
+									<tr id="graduationDesign">
+										<th>毕业设计:</th>
+										<td colspan="3">
+											<a href="/graduation/download/{{ project.GraduationReport }}" title="点击下载">{{ project.GraduationName }}</a>
+										</td>
+										{% if not project.GraduationShow %}
+										<td></td>
+										{% else %}
+										<td><a class="modifyBtn" onclick="myFun3()">修改</a></td>
+										{% endif %}
+	                                </tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="unShow" id="upSelect">
+						<div class="panel panel-primary">
+	                        <div class="panel-heading">
+	                            <h5 class="panel-title">选题报告</h5>
+	                        </div>
+	                        <div class="panel-body">
+	                            <form role="form" method="POST" action="" enctype="multipart/form-data">
+									<label for="fileUpload">上传文件:</label>
+									<input type="file" name="fileSelectItem" />
+									<br>
+	                                <button type="submit" class="btn btn-blue">提交</button>
+	                            </form>  
+	                        </div>
+						</div>
+					</div>
+					<div class="unShow" id="upMission">
+						<div class="panel panel-primary">
+	                        <div class="panel-heading">
+	                            <h5 class="panel-title">任务报告</h5>
+	                        </div>
+	                        <div class="panel-body">
+	                            <form role="form" method="POST" action="" enctype="multipart/form-data">
+									<label for="fileUpload">上传文件:</label>
+									<input type="file" name="fileMission" />
+									<br>
+	                                <button type="submit" class="btn btn-blue">提交</button>
+	                            </form>  
+	                        </div>
+						</div>
+					</div>
+					<div class="unShow" id="upMid">
+						<div class="panel panel-primary">
+	                        <div class="panel-heading">
+	                            <h5 class="panel-title">中期报告</h5>
+	                        </div>
+	                        <div class="panel-body">
+	                            <form role="form" method="POST" action="" enctype="multipart/form-data">
+									<label for="fileUpload">上传文件:</label>
+									<input type="file" name="fileMid" />
+									<br>
+	                                <button type="submit" class="btn btn-blue">提交</button>
+	                            </form>  
+	                        </div>
+						</div>
+					</div>
+					<div class="unShow" id="upGraduate">
+						<div class="panel panel-primary">
+	                        <div class="panel-heading">
+	                            <h5 class="panel-title">毕业设计</h5>
+	                        </div>
+	                        <div class="panel-body">
+	                            <form role="form" method="POST" action="" enctype="multipart/form-data">
+									<label for="fileUpload">上传文件:</label>
+									<input type="file" name="fileGraduate" />
+									<br>
+	                                <button type="submit" class="btn btn-blue">提交</button>
+	                            </form>  
+	                        </div>
+						</div>
+					</div>
+					
+					<div class="divider-line"></div>
+
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h5 class="panel-title">教师反馈</h5>
+						</div>
+						<div class="panel-body">
+						<table class="table table-bordered">
+							<thead>
+								<th width="100px"></th>
+								<th width="auto">教师反馈</th>
+								<th width="100px">是否通过</th>
+							</thead>
+							<tbody>
+								<tr>
+									<th>选题报告:</th>
+									<td><a href="/graduation/download/{{ project.SelectionReportFormTea}}" title="点击下载">{{ project.SelectionBackName }}</a></td>
+									<td>{{ project.SelectionReportPass }}</td>
+								</tr>
+								<tr>
+									<th>任务报告:</th>
+									<td><a href="/graduation/download/{{ project.TaskReportFormTea }}" title="点击下载">{{ project.TaskBackName }}</a></td>
+                                    <td>{{ project.TaskReportPass }}</td>
+								</tr>
+								<tr>
+									<th>中期报告:</th>
+									<td><a href="/graduation/download/{{ project.MidtermReportFormTea }}" title="点击下载">{{ project.MidtermBackName }}</a></td>
+									<td>{{ project.MidtermReportPass }}</td>
+								</tr>
+								<tr>
+									<th>整体毕业设计:</th>
+									<td>
+										<ul>
+											<a href="/graduation/download/{{ project.GraduationPaperFormTea }}" title="点击下载">{{ project.GraduationTeaName }}</a>
+											<a href="/graduation/download/{{ project.GraduationPaperFormAss }}" title="点击下载">{{ project.GraduationAssName }}</a>
+										</ul>
+									</td>
+									<td>{{ project.GraduationPaperPass }}</td>
+                                </tr>
+							</tbody>
+						</table>
+						</div>
+					</div>
+				</div>
+			</div>           
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	var inputingFlag = 0;
+	var inputingDom;
+	$(".inlineModifyBtn").click(function(){
+		$this = $(this);
+		$this_input = $this.parent().parent().find(".item-input");
+		$this_show = $this.parent().parent().find(".item-show");
+		$this_type = $this.parent().parent().find(".item-input").attr('id').split('-')[1];
+
+		if(inputingFlag === 0){
+			$this_input.val($this_show.text());
+			$this_show.hide();
+			$this_input.show();
+			$this.text("保存");
+			inputingFlag = 1;
+			inputingDom = $this_type;
+		}
+		else if(inputingFlag === 1 && inputingDom == $this_type){
+			$this_show.text($this_input.val());
+			$this_input.hide();
+			$this_show.show();
+			$this.text("修改");
+			inputingFlag = 0;
+			$.ajax({
+                cache: false,
+                type: "POST",
+                url:"",
+                data: {
+                	type: $this_type,//表示修改的内容(title/teacher)
+                	submitData: $this_input.val()
+                },
+                dateType:"json",
+                async: true,
+                success: function(data) {
+                    if(data.status == 'success'){
+                        swal ({
+					        icon: "success",
+					        text: "操作成功",
+					    }).then(function(isConfirm){
+					    	window.location.reload();
+					    });
+                    }else if(data.status == 'fail'){
+                        swal ({
+                            icon: "error",
+                            text: data.data,
+                        }).then(function(isConfirm){
+                        window.location.reload();
+                        })
+                    }
+                }
+            });
+		}
+		
+	});
+
+</script>
+<script>
+	var tabcontent0, tabcontent1,tabcontent2,tabcontent3;
+	tabcontent0 = document.getElementById("upSelect");
+	tabcontent1 = document.getElementById("upMission");
+	tabcontent2 = document.getElementById("upMid");
+	tabcontent3 = document.getElementById("upGraduate");
+	function myFun0(){
+		if(tabcontent0.className=="show")tabcontent0.className="unShow";
+		else tabcontent0.className="show";
+	}
+	function myFun1(){
+		if(tabcontent1.className=="show")tabcontent1.className="unShow";
+		else tabcontent1.className="show";
+	}
+	function myFun2(){
+		if(tabcontent2.className=="show")tabcontent2.className="unShow";
+		else tabcontent2.className="show";
+	}
+	function myFun3(){
+		if(tabcontent3.className=="show")tabcontent3.className="unShow";
+		else tabcontent3.className="show";
+	}
+
+
+</script>
+{% endblock %}

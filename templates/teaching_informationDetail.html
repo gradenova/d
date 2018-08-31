@@ -1,0 +1,43 @@
+<!-- 注意这里后端要根据请求人的身份传不同的父类模板 -->
+{% extends extendTemplate %}
+
+{% block title %}详细信息{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+#information_title{
+text-align: center;
+font-size: 600;
+}
+#information_content{
+padding: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="fly-panel">
+        <div class="schedule">
+            <h4>教改/教材/教研项目信息中心</h4>
+            <div class="divider-line"></div>
+            <div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">
+						详细内容
+					</h5>
+				</div>
+				<div class="panel-body">
+					<h3 id="information_title">{{ info.title }}</h3>
+					<div id="information_content">
+						<p> {{ info.content }}</p>
+						<a href="/{{ info.fileUpload }}">{{ file_name }}</a>
+					</div>
+					
+				</div>
+			</div>
+            <div class="divider-line"></div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,63 @@
+
+{% extends '__base__.html' %}
+
+{% block nav %}
+<li><a href="{% url 'index' %}">首页</a></li>
+
+
+<li id="li-0"><a href="##">排课</a><span></span>
+	<div id="box-0" class="hidden-box">
+		<ul>
+			<a href="{% url 'courseAdminView' %}"><li>排课</li></a>
+            <a href="{% url 'CourseListTeacher' %}"><li>手动排课</li></a>
+		</ul>
+	</div>
+</li>
+
+
+<li id="li-1"><a href="##">教学项目管理</a><span></span>
+	<div id="box-1" class="hidden-box">
+		<ul>
+			<a href="/teaching/informationPublish/"><li>信息中心</li></a>
+			<a href="/teaching/ProjectSelect/"><li>项目评选</li></a>
+			<a href="/teaching/processCheckAdm/"><li>项目进度检查</li></a>
+            <a href="/teaching/projectDetailAdm/"><li>项目详情</li></a>
+
+		</ul>
+	</div>
+</li>
+
+
+<li id="li-2"><a href="##">SRTP管理</a><span></span>
+	<div id="box-2" class="hidden-box">
+		<ul>
+			<a href="/srtp/releaseProjectCollect/"><li>SRTP征集</li></a>
+			<a href="/srtp/submitPublishProject/"><li>SRTP公布</li></a>
+			<a href="/srtp/verifyProjectAdm/"><li>SRTP审核</li></a>
+			<a href="/srtp/ProcessManageAdm/"><li>进程管理</li></a>
+			<a href="/srtp/statisticProjectAdm/"><li>数据统计</li></a>
+		</ul>
+	</div>
+</li>
+
+
+<li id="li-3"><a>毕业设计管理</a><span></span>
+	<div id="box-3" class="hidden-box">
+		<ul>
+			<a href="{% url 'graduation_admin' %}"><li>毕业设计信息查询</li></a>
+			<a href="{% url 'graduation_admin_dateSet' %}"><li>毕业设计进度管理</li></a>
+		</ul>
+	</div>
+</li>
+
+<li id="li-4"><a href="##">信息管理</a><span></span>
+	<div id="box-4" class="hidden-box">
+		<ul>
+			<a href="/addStudent/"><li>学生信息</li></a>
+			<a href="/addTeacher/"><li>教师信息</li></a>
+			<a href="/addCourse/"><li>课程信息</li></a>
+		</ul>
+	</div>
+</li>
+
+{% endblock %}

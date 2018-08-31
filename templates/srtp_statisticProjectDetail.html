@@ -1,0 +1,89 @@
+
+{% extends 'baseAdm.html' %}
+
+{% block title %}srtp项目详情{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style>
+.th{
+    width: 20%;
+    background-color: rgb(196, 196, 230);
+}
+.td{
+    background-color: rgb(245, 245, 245);
+}
+.pay_modify{
+	margin-left: 500px;
+}
+.student_modify{
+	margin-left: 100px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fly-panel">
+    <div class="schedule">
+        <h4>SRTP项目详细信息</h4>
+        <div class="divider-line"></div>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th class="th">题目:</th>
+                    <td class="td">{{ project.TPA_belong.title }}</td>
+                </tr>
+                <tr>
+                    <th class="th">指导教师:</th>
+					<td class="td">{{ project.TPA_belong.guide_teacher }}</td>
+                </tr>
+                <tr>
+                    <th class="th">项目经费:</th>
+                    <td class="td">{{ project.amountNumber }}</td>
+                </tr>
+                <tr>
+                    <th class="th">团队成员:</th>
+                    <td class="td">
+                    <table>
+                        <thead>
+                            <tr>
+                            <th width="150px">学院</th>
+                            <th width="150px">班级</th>
+                            <th width="150px">姓名</th>
+							<th width="150px">学号</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	{% for member in project.signupstudent_set.all %}
+                            <tr>
+                            <td>{{ member.college }}</td>
+                            <td>{{ member.Class }}</td>
+                            <td>{{ member.realname }}</td>
+                            <td>{{ member.stuID }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="th">项目进度汇报:</th>
+                    <td class="td">
+                        <ul style="margin: 0px;">
+                        	{% for File in FileList %}
+							<!-- 文件目录待定 -->
+							<li><a href="/{{ File.file_path }}">{{ File.name }}</a></li>
+							{% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="th">当前项目状态:</th>
+                    <td class="td">{{  state }}</td>
+                </tr>
+                </tbody>
+          </table>
+		<div class="divider-line"></div>            
+    </div>
+</div>
+{% endblock %}

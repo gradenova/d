@@ -1,0 +1,134 @@
+<!-- 
+说明：
+该页面为供“管理员”对学生毕业设计进行查看的项目详情页面
+在管理员的学生项目列表页中点击某个项目会进入此页面
+
+
+说明编辑人：段旭（设计这个页面的是小明，不关我事orz...）
+-->
+
+{% extends 'baseAdm.html' %}
+
+{% block title %}毕设项目信息{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+
+<style>
+	.table>tbody>tr>th{
+	background-color: #6898ee;
+	}
+	.unShow{
+		display: none;
+	}
+	.show{
+		display: block;
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+			<div class="fly-panel">
+				<div class="schedule">
+					<h4>毕业设计详情</h4>
+					<div class="divider-line"></div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+								<h5 class="panel-title">学生信息</h5>
+							</div>
+							<div class="panel-body">
+								<table class="table table-bordered">
+									<tbody>
+										<tr>
+											<th width="100px">毕设题目：</th>
+											<td colspan="3">{{ project.title }}</td>
+										</tr>
+										<tr>
+											<th width="100px">学生学号：</th>
+											<td colspan="3">{{ project.studentID }}</td>
+										</tr>
+										<tr>
+											<th width="100px">学生姓名：</th>
+											<td colspan="3">{{ project.studentName }}</td>
+										</tr>
+										<tr>
+											<th width="100px">学生班级：</th>
+											<td colspan="3">{{ project.studentClass }}</td>
+										</tr>
+										<tr>
+											<th width="100px">指导老师：</th>
+											<td colspan="3">{{ project.teacherName }}</td>
+										</tr>
+										<tr>
+											<th width="100px">评审老师：</th>
+											<td colspan="3">{{ project.assesserName }}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="divider-line"></div>
+
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h5 class="panel-title">毕设文档</h5>
+							</div>
+							<div class="panel-body">
+								<table class="table table-bordered">
+									<thead>
+										<th></th>
+										<th>学生报告</th>
+										<th>教师反馈</th>
+										<th>是否通过</th>
+									</thead>
+									<tbody>
+										<tr>
+											<th>选题报告:</th>
+											<td>
+												<a href="/graduation/download/{{ project.SelectionReport }}" title="点击下载">{{ project.SelectionName }}</a>
+											</td>
+											<td><a href="/graduation/download/{{ project.SelectionReportFormTea }}" title="点击下载">{{ project.SelectionBackName }}</a></td>
+											<td>{{ project.SelectionReportPass }}</td>
+										</tr>
+										<tr>
+											<th>任务报告:</th>
+											<td>
+												<a href="/graduation/download/{{ project.TaskReport }}" title="点击下载">{{ project.TaskName }}</a>
+											</td>
+											<td><a href="/graduation/download/{{ project.TaskReportFormTea }}" title="点击下载">{{ project.TaskBackName }}</a></td>
+											<td>{{ project.TaskReportPass }}</td>
+										</tr>
+										<tr>
+											<th>中期报告:</th>
+											<td>
+												<a href="/graduation/download/{{ project.MidtermReport }}" title="点击下载">{{ project.MidtermName }}</a>
+											</td>
+											<td><a href="/graduation/download/{{ project.MidterReportFormTea }}" title="点击下载">{{ project.MidtermBackName }}</a></td>
+											<td>{{ project.MidtermReportPass }}</td>
+										</tr>
+										<tr>
+											<th>毕业设计:</th>
+											<td>
+												<a href="/graduation/download/{{ project.GraduationReport }}" title="点击下载">{{ project.GraduationName }}</a>
+											</td>
+											<td>
+                                                <ul>
+                                                	<a href="/graduation/download/{{ project.GraduationPaperFormTea }}" title="点击下载">{{ project.GraduationTeaName }}</a>
+                                                	<a href="/graduation/download/{{ project.GraduationPaperFormAss }}" title="点击下载">{{ project.GraduationAssName }}</a>
+                                                </ul>
+											</td>
+											<td>{{ project.GraduationPaperPass }}</td>
+										</tr>
+									</tbody>
+								</table>  
+							</div>
+						</div>
+					<div class="divider-line"></div>
+					
+					</div>
+				</div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

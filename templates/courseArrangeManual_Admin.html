@@ -1,0 +1,481 @@
+<!-- 
+说明：
+该页面为供“管理员（秘书）”手工排课的页面
+
+在本页面中提交的参数说明如下：
+		1）项目ID和教师ID好理解
+		2）theoryCourseArrange是理论课的排课信息，其是一个二维数组，
+			第一维：上课周，其中不上课的周该维中内容为空，上课的周该维内容为该周的上课信息数组
+			第二维：该周的上课信息数组，记录该周每节课的信息，每一节课对应一个数组元素。数组元素为对象，对象中包含“weekday”、“time”、“building”、“classroom”字段，具体的值对应关系麻烦看一下135行左右的对应关系
+
+
+说明编辑人：段旭
+-->
+
+{% extends 'baseAdm.html' %}
+
+{% block title %}手工排课{% endblock %}
+
+{% block style %}
+<link href="/static/css/dxStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+	.basic-input{
+		border: 1px solid #adadad;
+	    vertical-align: middle;
+	    border-radius: 3px;
+	    height: 30px;
+	    padding: 0px 16px;
+	    margin: 0 5px;
+	    font-size: 14px;
+	    color: #555555;
+	    outline: none;
+	    color: black;
+	}
+	.schedule .remark-input {
+	    padding: 7px 0px 7px 250px;
+	}
+
+	.schedule td{
+	    padding: 0 10px;
+	    cursor: inherit;
+	}
+
+	.singleWeekArrange{
+		display: none;
+	}
+
+	.courseArrangeTable select{
+		width: 100%;
+		height: 30px;
+		padding: 0 0 0 0; 
+		margin: 5px 0;
+	}
+
+	.courseArrangeTable input{
+	    width: 100%;
+	    height: 30px;
+	    padding: 0 0 0 5px;
+	    margin: 5px 0;
+	    color: black;
+	    text-align: left;
+	    border: inherit;
+	    font-size: 14px;
+	    display: block;
+	}
+
+	.lab-weekhours-table td{
+	    height: 50px;
+	}
+
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+	  -webkit-appearance: none;
+	}
+	input[type="number"]{
+	  -moz-appearance: textfield;
+	}
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+
+			<div class="fly-panel">
+				<div class="schedule">
+					<h4>排课结果</h4>
+					<div class="divider-line"></div>
+					<p>当前课程：{{ course.courseName }}</p>
+					<p>当前课程ID：{{ course.courseID }}</p>
+					<p>授课教师：{{ course.teacherName }}</p>
+					<p>授课教师ID：{{ course.teacherID }}</p>
+					<p>上课班级：{{ course.classes }}</p>
+					<p>总学时：{{ course.totalHours }}</p>
+					<p>教师额外的排课需求：{{ course.otherDemand }}</p>
+					<div class="divider-line"></div>
+					<div class="panel panel-default" style="margin-top: 15px;">
+                        <div class="panel-heading">
+                            <h5 class="panel-title">
+                                当前<span style="color: black; font-weight:600; font-size: 16px;">理论课</span>课表（点击课表便可修改排课结果，修改完之后请点击提交）
+                            </h5>
+                        </div>
+                        <div class="panel-body">
+                        	<table class="weekhours-table">
+                        		<tr>
+                        			<th>教学周</th>
+                        			<th>教学天</th>
+                        			<th>时间</th>
+                        			<th>楼宇</th>
+                        			<th>教室</th>
+                        			<th>添加时间</th>
+                        		</tr>
+							</table>
+                    	</div>
+                    </div>
+
+                    <div class="lab-wraper">
+                    	<p style="display: inline;">如果本课程开设实验课则点击此处：</p>
+                    	<button id="add-lab-schedule" class="btn btn-blue" style="display: inline;">添加实验课</button>
+                    </div>
+                    
+
+
+					<div class="divider-line"></div>
+			
+					<button id="save-schedule" class="btn btn-blue">保存</button>
+					
+				</div>
+			</div>
+{% endblock %}
+			
+			
+		
+
+{% block js %}
+
+<!-- //发布课表 -->
+<script type="text/javascript">
+	$('#releaseAllCourseArrange').click(function(){
+		swal({
+            icon:"info",
+            text:"您确定要公开发布所有课表吗？",
+            buttons: ["取消", "确定"],
+        }).then(function(isConfirm) {
+			$.ajax({
+	            cache: false,
+	            type: "POST",
+	            url:"/releaseAllCourseArrange/",
+	            data: '',
+	            dateType:"json",
+	            async: true,
+	            success: function(data) {
+	                if(data.status == 'success'){
+	                    swal ({
+	                        icon: "success",
+	                        text: "发布成功"
+	                    });
+	                }else if(data.status == 'fail'){
+	                    swal ({
+	                        icon: "error",
+	                        text: "发布失败请重试"
+	                    });
+	                }
+	            },
+	        });
+		});
+	});
+</script>
+
+<script type="text/javascript">
+	function renderArrangeListInside(name){
+
+		//渲染空表
+		for(var i = 1; i <= 16; i++){
+			$('.'+ name +'').append(
+				'<tr class="courseArrangeTable week-'+ i +'">'+
+					'<th>第'+ i +'周</th>'+
+					'<td class="weekday">'+
+						// '<select class="form-control" name="weekday">'+
+						// 	'<option value="1">星期一</option>'+
+						// 	'<option value="2">星期二</option>'+
+						// 	'<option value="3">星期三</option>'+
+						// 	'<option value="4">星期四</option>'+
+						// 	'<option value="5">星期五</option>'+
+						// 	'<option value="6">星期六</option>'+
+						// 	'<option value="7">星期日</option>'+
+						// '</select>'+
+					'</td>'+
+					'<td class="time">'+
+						// '<select class="form-control" name="time">'+
+						// 	'<option value="1">8:00-9:35</option>'+
+						// 	'<option value="2">9:55-11:30</option>'+
+						// 	'<option value="3">13:30-15:05</option>'+
+						// 	'<option value="4">15:20-16:55</option>'+
+						// 	'<option value="5">17:10-18:45</option>'+
+						// 	'<option value="6">19:30-21:05</option>'+
+						// '</select>'+
+					'</td>'+
+					'<td class="building">'+
+						// '<select class="form-control" name="building">'+
+						// 	'<option value="1">逸夫楼</option>'+
+						// 	'<option value="2">教学楼</option>'+
+						// 	'<option value="3">机电楼</option>'+
+						// '</select>'+
+					'</td>'+
+					'<td class="classroom">'+
+						// '<input type="number" class="basic-input" placeholder="输入教室">'+
+					'</td>'+
+					'<td>'+
+						'<a class="addCourseItem" style="font-size: 16px;">添加</a>'+
+					'</td>'+
+				'</tr>'
+				);
+		}
+
+		//渲染理论课排课结果
+		if(name == "weekhours-table"){
+			{% for classTime in classTimeList %}
+				var $week = $('.'+ name +' .week-'+ {{ classTime.week }} +'');
+
+				//渲染上课日
+				$week.find(".weekday").append(
+					'<select class="form-control" name="weekday">'+
+						'<option value="1">星期一</option>'+
+						'<option value="2">星期二</option>'+
+						'<option value="3">星期三</option>'+
+						'<option value="4">星期四</option>'+
+						'<option value="5">星期五</option>'+
+						'<option value="6">星期六</option>'+
+						'<option value="7">星期日</option>'+
+					'</select>'
+				);
+				$week.find(".weekday select:last")[0][{{ classTime.day }}-1].selected=true;
+
+				//渲染上课时间
+				$week.find(".time").append(
+					'<select class="form-control" name="time">'+
+						'<option value="1">8:00-9:35</option>'+
+						'<option value="2">9:55-11:30</option>'+
+						'<option value="3">13:30-15:05</option>'+
+						'<option value="4">15:20-16:55</option>'+
+						'<option value="5">17:10-18:45</option>'+
+						'<option value="6">19:30-21:05</option>'+
+					'</select>'
+				);
+				$week.find(".time select:last")[0][{{ classTime.number }}-1].selected=true;
+
+				//渲染上课地点
+				$week.find(".building").append(
+					'<select class="form-control" name="building">'+
+						'<option value="1">逸夫楼</option>'+
+						'<option value="2">教学楼</option>'+
+						'<option value="3">机电楼</option>'+
+					'</select>'
+				);
+				var paraBuilding = "{{ classTime.building }}"
+				if(paraBuilding == "逸夫楼") $week.find(".building select:last")[0][0].selected=true;
+				else if(paraBuilding == "教学楼") $week.find(".building select:last")[0][1].selected=true;
+				else $week.find(".building select:last")[0][2].selected=true;
+
+				//渲染上课教室
+				$week.find(".classroom").append(
+					'<input type="number" class="basic-input" value="{{ classTime.roomnumber }}" placeholder="输入教室">'
+				);
+			{% endfor %}
+
+		}
+		//渲染实验课排课结果
+		else if(name == "lab-weekhours-table"){
+			{% for classTime in LabClassTimeList %}
+				var $week = $('.'+ name +' .week-'+ {{ classTime.week }} +'');
+
+				//渲染上课日
+				$week.find(".weekday").append(
+					'<select class="form-control" name="weekday">'+
+						'<option value="1">星期一</option>'+
+						'<option value="2">星期二</option>'+
+						'<option value="3">星期三</option>'+
+						'<option value="4">星期四</option>'+
+						'<option value="5">星期五</option>'+
+						'<option value="6">星期六</option>'+
+						'<option value="7">星期日</option>'+
+					'</select>'
+				);
+				$week.find(".weekday select:last")[0][{{ classTime.day }}-1].selected=true;
+
+				//渲染上课时间
+				$week.find(".time").append(
+					'<select class="form-control" name="time">'+
+						'<option value="1">8:00-9:35</option>'+
+						'<option value="2">9:55-11:30</option>'+
+						'<option value="3">13:30-15:05</option>'+
+						'<option value="4">15:20-16:55</option>'+
+						'<option value="5">17:10-18:45</option>'+
+						'<option value="6">19:30-21:05</option>'+
+					'</select>'
+				);
+				$week.find(".time select:last")[0][{{ classTime.number }}-1].selected=true;
+
+				//渲染上课地点
+				$week.find(".building").append(
+					'<select class="form-control" name="building">'+
+						'<option value="1">逸夫楼</option>'+
+						'<option value="2">教学楼</option>'+
+						'<option value="3">机电楼</option>'+
+					'</select>'
+				);
+				var paraBuilding = "{{ classTime.building }}"
+				if(paraBuilding == "逸夫楼") $week.find(".building select:last")[0][0].selected=true;
+				else if(paraBuilding == "教学楼") $week.find(".building select:last")[0][1].selected=true;
+				else $week.find(".building select:last")[0][2].selected=true;
+
+				//渲染上课教室
+				$week.find(".classroom").append(
+					'<input type="number" class="basic-input" value="{{ classTime.roomnumber }}" placeholder="输入教室">'
+				);
+			{% endfor %}
+
+
+		}
+		
+
+	}
+
+	function renderClick(fatherName){
+		$('.'+ fatherName +' .addCourseItem').click(function(){
+			$thisWeek = $(this).parent().parent();
+			$thisWeek.find(".weekday").append('<select class="form-control" name="weekday">											<option value="1">星期一</option>											<option value="2">星期二</option>											<option value="3">星期三</option>											<option value="4">星期四</option>											<option value="5">星期五</option>											<option value="6">星期六</option>											<option value="7">星期日</option>										</select>');
+			$thisWeek.find(".time").append('<select class="form-control" name="time">											<option value="1">8:00-9:35</option>											<option value="2">9:55-11:30</option>											<option value="3">13:30-15:05</option>											<option value="4">15:20-16:55</option>											<option value="5">17:10-18:45</option>											<option value="6">19:30-21:05</option>										</select>');
+			$thisWeek.find(".building").append('<select class="form-control" name="building">											<option value="1">逸夫楼</option>											<option value="2">教学楼</option>											<option value="3">机电楼</option>										</select>');
+			$thisWeek.find(".classroom").append('<input type="number" class="basic-input" placeholder="输入教室">');
+		});
+	}
+	
+
+	
+
+</script>
+
+<script type="text/javascript">
+	renderArrangeListInside('weekhours-table');
+	renderClick('weekhours-table');
+</script>
+
+
+
+<script type="text/javascript">
+	var labflag = 0;
+	$("#add-lab-schedule").click(function(){
+		if(labflag == 0){
+			$(".lab-wraper").append(
+				'<div class="panel panel-default" style="margin-top: 15px;">'+
+                        '<div class="panel-heading">'+
+                            '<h5 class="panel-title">'+
+                                '修改<span style="color: black; font-weight:600; font-size: 16px;">实验课</span>课表（点击课表便可修改排课结果，修改完之后请点击提交）'+
+                            '</h5>'+
+                        '</div>'+
+                        '<div class="panel-body">'+
+                        	'<table class="lab-weekhours-table">'+
+                        		'<tr>'+
+                        			'<th>教学周</th>'+
+                        			'<th>教学天</th>'+
+                        			'<th>时间</th>'+
+                        			'<th>楼宇</th>'+
+                        			'<th>教室</th>'+
+                        			'<th>添加时间</th>'+
+                        		'</tr>'+
+							'</table>'+
+                    	'</div>'+
+                    '</div>'
+                    );
+			renderArrangeListInside('lab-weekhours-table');
+			renderClick('lab-weekhours-table');
+			labflag = 1;
+		}
+		else{
+			$(".lab-wraper .panel").remove();
+			labflag = 0;
+		}
+
+	
+
+	});
+
+</script>
+
+
+
+<script type="text/javascript">
+	$('#save-schedule').click(function(){
+
+		swal({
+            icon:"info",
+            text:"您确定要提交以上手工排课吗？",
+            buttons: ["取消", "确定"],
+        }).then(function(isConfirm) {
+            if(isConfirm === true){
+                
+                // 数据预处理
+                var theoryWeekArray = [];
+				var labWeekArray = [];
+				var $theoryWeek = $('.weekhours-table .courseArrangeTable');
+				var $labWeek = $('.lab-weekhours-table .courseArrangeTable');
+
+				for(var i = 0; i < $theoryWeek.length; i++){
+					if($($theoryWeek[i]).find('select').length == 0){
+						continue;
+					}
+					else{ 
+						var courseArrangeArray = [];
+						var amountOfCourseInWeek = $($theoryWeek[i]).find('.weekday select').length;
+						for (var j = 0; j < amountOfCourseInWeek; j++) {
+							var courseArrangeInfo = {};
+							courseArrangeInfo['weekday'] = $($($theoryWeek[i]).find('.weekday select')[j]).val();
+							courseArrangeInfo['time'] = $($($theoryWeek[i]).find('.time select')[j]).val();
+							courseArrangeInfo['building'] = $($($theoryWeek[i]).find('.building select')[j]).val();
+							courseArrangeInfo['classroom'] = $($($theoryWeek[i]).find('.classroom input')[j]).val();
+
+							courseArrangeArray[j] = courseArrangeInfo;
+						}
+
+						theoryWeekArray[i] = courseArrangeArray;
+					}
+				}
+
+				for(var i = 0; i < $labWeek.length; i++){
+					if($($labWeek[i]).find('select').length == 0){
+						continue;
+					}
+					else{ 
+						var courseArrangeArray = [];
+						var amountOfCourseInWeek = $($labWeek[i]).find('.weekday select').length;
+						for (var j = 0; j < amountOfCourseInWeek; j++) {
+							var courseArrangeInfo = {};
+							courseArrangeInfo['weekday'] = $($($labWeek[i]).find('.weekday select')[j]).val();
+							courseArrangeInfo['time'] = $($($labWeek[i]).find('.time select')[j]).val();
+							courseArrangeInfo['building'] = $($($labWeek[i]).find('.building select')[j]).val();
+							courseArrangeInfo['classroom'] = $($($labWeek[i]).find('.classroom input')[j]).val();
+
+							courseArrangeArray[j] = courseArrangeInfo;
+						}
+						
+						labWeekArray[i] = courseArrangeArray;
+					}
+				}
+
+
+
+				//ajax提交
+				$.ajax({
+		            cache: false,
+		            type: "POST",
+		            url:"/course/courseHandArrange/",
+		            data: {
+		            	courseID: "{{ course.courseID }}",
+		            	teacherID: "{{ course.teacherID }}",
+		            	courseClass: "{{ course.classes }}",
+		       			theoryCourseArrange: theoryWeekArray,
+		            	labCourseArrange: labWeekArray,
+		            },
+		            dateType:"json",
+		            async: true,
+		            success: function(data) {
+		                if(data.status == 'success'){
+		                    swal ({
+		                        icon: "success",
+		                        text: "保存成功"
+		                    });
+		                }else if(data.status == 'fail'){
+		                    swal ({
+		                        icon: "error",
+		                        text: data.msg
+		                    });
+		                }
+		            },
+		        });
+            }
+        });
+	});
+</script>
+
+{% endblock %}

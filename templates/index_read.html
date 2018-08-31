@@ -1,0 +1,26 @@
+
+{% extends extendTemplate  %}
+
+{% block title %}详情{% endblock %}
+
+{% block style %}
+    <link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style>
+
+</style>
+{% endblock %}
+
+{% block content %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span class="glyphicon glyphicon-list-alt" style="margin-right: 20px;"></span>详细内容
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <h2 style="text-align: center;">{{ notice.title }}</h2> 
+                        <p style="margin: 20 20 20 20;text-align: right;">{{ notice.publishTime }}</p>
+                        <p style="margin: 20 20 20 20">{{ notice.content }}</p>
+                    </div>
+                </div>
+{% endblock %}

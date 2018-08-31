@@ -1,0 +1,54 @@
+{% extends 'baseTea.html' %}
+
+{% block title %}srtp项目进度检查{% endblock %}
+
+{% block style %}
+<link href="/static/css/xmStyle.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+	#count{
+		color: brown;
+	}
+	.head{
+		background-color: rgb(149, 196, 236);
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+			<div class="fly-panel">
+				<div class="schedule">
+					<h4>项目进程检查</h4>
+					<div class="divider-line"></div>
+					<table class="table table-condensed">
+						<thead class="head">
+						  <tr>
+							<th>标题</th>
+							<th width="200px">任务类型</th>
+							<th width="200px">截止时间</th>
+							<th width="70px">提交</th></tr>
+						</thead>
+						<tbody>
+							{% for item in processCheckItems %}
+						  	<tr>
+								<td>{{ item.title }}</td>
+								<td>{{ item.kind }}</td>
+								<td>{{ item.deadline|date:"Y-m-d" }}</td>
+								<td>
+									<a href="/srtp/processCheck?itemID={{ item.id }}&type={{ item.kind }}">
+										提交
+									</a>
+								</td>
+						  	</tr>
+						  	{% endfor %}
+						</tbody>
+					  </table>
+					<div class="divider-line"></div>
+					<p>共<span id="count">{{processCheckItems|length}}</span>条记录</p>
+					
+				</div>
+
+
+
+			</div>
+			
+{% endblock %}
